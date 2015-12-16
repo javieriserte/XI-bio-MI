@@ -76,7 +76,7 @@ public class MIMatrixPane extends JScrollPane {
 		int[] pixels = new int[16 * 16];
 		Image image = Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(16, 16, pixels, 0, 16));
 		Cursor transparentCursor = Toolkit.getDefaultToolkit().createCustomCursor(image, new Point(0, 0), "invisibleCursor");
-		this.getImagePane().setCursor(transparentCursor);
+		//this.getImagePane().setCursor(transparentCursor);
 		this.showArea = false;
 		
 	}

@@ -3,7 +3,6 @@ package org.jiserte.mi.mimatrixviewer.matrixview_new;
 import java.awt.BorderLayout;
 import java.awt.Rectangle;
 
-import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
 import org.jiserte.mi.mimatrixviewer.DataContainer;

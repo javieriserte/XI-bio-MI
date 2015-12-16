@@ -2,8 +2,9 @@ package org.jiserte.mi.misticmod.datastructures;
 
 
 import org.jiserte.mi.misticmod.datastructures.format.FormatContainer;
-import io.onelinelister.OneLineListReader;
-public class ZScoreListParser implements OneLineListReader.LineParser<Double> {
+import io.onelinelister.LineParser;
+
+public class ZScoreListParser implements LineParser<Double> {
 
 	private FormatContainer container = new FormatContainer();
 	
