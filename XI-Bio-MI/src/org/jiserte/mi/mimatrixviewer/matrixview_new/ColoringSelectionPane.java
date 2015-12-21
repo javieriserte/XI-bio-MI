@@ -159,8 +159,16 @@ public class ColoringSelectionPane extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			
-			//ColoringSelectionPane.this.getViewer().ColorSelected();
+			@SuppressWarnings("unchecked")
+      JComboBox<ColorMapper> mappers = (JComboBox<ColorMapper>) e.getSource();
+			ColorMapper selecttedMapper = (ColorMapper) mappers.getSelectedItem();
+			if (selecttedMapper != null) {
+			  ColoringSelectionPane.this.viewer.getMatrixPane().setColor(selecttedMapper);
+			  System.out.println("Mapper: " + selecttedMapper.toString());
+			  ColoringSelectionPane.this.viewer.forceDrawing();
+			} else {
+			  System.out.println("Mapper: Null" );
+			}
 			
 		}
 		

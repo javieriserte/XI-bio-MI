@@ -88,6 +88,7 @@ public class MIMatrixPane extends JScrollPane {
 	// Public Interface
 	public void resetImage() {
 		this.setImage(null);
+		this.repaint();
 	}
 	public void accomodateSize() {
 		boolean showBands = this.getProteinLengths().length >0;
@@ -429,15 +430,26 @@ public class MIMatrixPane extends JScrollPane {
     }
 		
 		@Override
-		public void mousePressed(MouseEvent e) {}
+		public void mousePressed(MouseEvent e) {
+		  if (e.getButton() == MouseEvent.BUTTON1) {
+  	    int mpx = e.getX();
+  	    int mpy = e.getY();
+  	    if (MIMatrixPane.this.getMatrix()!=null) {
+  	      exportData(mpx,mpy);
+  	    } 
+		  }
+		  
+		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-    int mpx = e.getX();
-    int mpy = e.getY();
-    if (MIMatrixPane.this.getMatrix()!=null) {
-      exportData(mpx,mpy);
-    }
+      if (e.getButton() == MouseEvent.BUTTON1) {
+      int mpx = e.getX();
+      int mpy = e.getY();
+      if (MIMatrixPane.this.getMatrix()!=null) {
+        exportData(mpx,mpy);
+      } 
+      };
 		}
 
 		@Override
@@ -447,7 +459,18 @@ public class MIMatrixPane extends JScrollPane {
 		public void mouseExited(MouseEvent e) {}
 
 		@Override
-		public void mouseDragged(MouseEvent e) {}
+		public void mouseDragged(MouseEvent e) {
+//		  int b1 = MouseEvent.BUTTON1_DOWN_MASK;
+//		  int b2 = MouseEvent.BUTTON2_DOWN_MASK;
+//		  if ((e.getModifiersEx() & (b1 | b2)) == b1) {
+      int mpx = e.getX();
+      int mpy = e.getY();
+      if (MIMatrixPane.this.getMatrix()!=null) {
+        drawZoomInCursor(mpx,mpy);
+      }
+//      }
+//      System.out.println(e.getButton());
+		}
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
@@ -456,7 +479,6 @@ public class MIMatrixPane extends JScrollPane {
 	    if (MIMatrixPane.this.getMatrix()!=null) {
 	      drawZoomInCursor(mpx,mpy);
 	    }
-
 		}
 		
 	}

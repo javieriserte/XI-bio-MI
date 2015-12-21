@@ -1,5 +1,6 @@
 package org.jiserte.mi.mimatrixviewer.matrixview_new;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -9,6 +10,7 @@ import java.awt.Rectangle;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
+import javax.swing.border.StrokeBorder;
 
 import java.awt.Graphics2D;
 
@@ -40,14 +42,13 @@ public class ColorMapperCellRenderer extends JPanel implements
       this.index = index;
       this.isSelected = isSelected;
       this.cellHasFocus = cellHasFocus;
-      this.setPreferredSize(new Dimension(100,30));
-      this.setMinimumSize(new Dimension(100,30));
-      this.setSize(new Dimension(100,30));
+      this.setPreferredSize(new Dimension(100,25));
+      this.setMinimumSize(new Dimension(100,25));
+      this.setSize(new Dimension(100,25));
     return this;
   }
   
   public void paint(Graphics g) {
-    // TODO  Use clipping instead of redrawing the complete image every time.
     int divisions=5;
     int posX=1;
     int divWidth = (this.getWidth() -1 ) / divisions;
@@ -71,8 +72,10 @@ public class ColorMapperCellRenderer extends JPanel implements
           totalDivisionsCounter++;
         }
       }
-      ((Graphics2D) g).setColor(Color.gray);
-      ((Graphics2D) g).draw(new Rectangle(0,top-1,this.getWidth()-1,height+1));
+      ((Graphics2D) g).setStroke(new BasicStroke(2));
+      ((Graphics2D) g).setColor(this.isSelected?Color.black:Color.gray);
+      ((Graphics2D) g).draw(new Rectangle(1,top-1,this.getWidth()-3,height));
+      
     }
   }
   

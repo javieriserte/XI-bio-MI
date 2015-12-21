@@ -120,13 +120,18 @@ public class MatrixViewMainPane extends MIViewingPane{
 		this.getMatrixPane().setData(data);
 		
 		this.getColoringPane().getMatrixColoringModel().removeAllElements();
-    this.getColoringPane().addMatrixColoringStrategy(ColorMapperFactory.getPercentilForMatrix(this.data.getData(), Color.BLACK, Color.red, 5));
-    //this.getColoringPane().addMatrixColoringStrategy(ColorMapperFactory.getContinuousForMatrix(this.data.getData(), Color.BLACK, Color.red));
-    //this.getColoringPane().addMatrixColoringStrategy(ColorMapperFactory.getBlueRedForMatrix(this.data.getData(), 6.5d));
-//		this.getColoringPane().addMatrixColoringStrategy(MatrixColoringStrategyFactory.createRedBlueGradientNoCutOff(matrix));
+    this.getColoringPane().addMatrixColoringStrategy(
+        ColorMapperFactory.getPercentilForMatrix(this.data.getData(), 
+            Color.yellow.darker().darker(), Color.red, 5,true));
+    this.getColoringPane().addMatrixColoringStrategy(
+        ColorMapperFactory.getContinuousForMatrix(this.data.getData(), 
+            Color.BLACK, Color.red,false));
+    this.getColoringPane().addMatrixColoringStrategy(
+        ColorMapperFactory.getBlueRedForMatrix(this.data.getData(), 6.5d));
 //		
 		this.getColoringPane().getZoomMatrixColoringModel().removeAllElements();
-		this.getColoringPane().addZoomMatrixColoringStrategy(ColorMapperFactory.getBlackWhiteForZoom(this.data.getData(), 6.5d));
+		this.getColoringPane().addZoomMatrixColoringStrategy(
+		    ColorMapperFactory.getBlackWhiteForZoom(this.data.getData(), 6.5d));
 //		this.getColoringPane().addZoomMatrixColoringStrategy(ZoomMatrixColoringStrategyFactory.BlackAndWhiteWithCutoff10());
 		
 	}
