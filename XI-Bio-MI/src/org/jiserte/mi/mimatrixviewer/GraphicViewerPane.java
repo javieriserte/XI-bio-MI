@@ -1,7 +1,5 @@
 package org.jiserte.mi.mimatrixviewer;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -58,7 +56,7 @@ public class GraphicViewerPane extends JTabbedPane implements Observer{
 //			e.printStackTrace();
 //		}
 		
-		this.addTab("Bot�n #1", component);
+		this.addTab("Matrix Viewer", component);
 		this.addTab("Bot�n #2", new JButton("bot�n 2"));
 		this.addTab("Bot�n #3", new JButton("bot�n 3"));
 		

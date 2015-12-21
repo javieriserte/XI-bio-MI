@@ -1,6 +1,7 @@
 package org.jiserte.mi.mimatrixviewer.matrixview_new;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Rectangle;
 
 import javax.swing.JSplitPane;
@@ -8,6 +9,7 @@ import javax.swing.JSplitPane;
 import org.jiserte.mi.mimatrixviewer.DataContainer;
 import org.jiserte.mi.mimatrixviewer.MIViewingPane;
 import org.jiserte.mi.mimatrixviewer.MI_Matrix;
+import org.jiserte.mi.mimatrixviewer.matrixview_new.colors.ColorMapperFactory;
 
 public class MatrixViewMainPane extends MIViewingPane{
 
@@ -118,8 +120,9 @@ public class MatrixViewMainPane extends MIViewingPane{
 		this.getMatrixPane().setData(data);
 		
 		this.getColoringPane().getMatrixColoringModel().removeAllElements();
-		this.getColoringPane().addMatrixColoringStrategy(ColorMapperFactory.getBlueRedForMatrix(this.data.getData(), 6.5d));
-//		this.getColoringPane().addMatrixColoringStrategy(MatrixColoringStrategyFactory.createRedBlueGradientGt10(matrix));
+    this.getColoringPane().addMatrixColoringStrategy(ColorMapperFactory.getPercentilForMatrix(this.data.getData(), Color.BLACK, Color.red, 5));
+    //this.getColoringPane().addMatrixColoringStrategy(ColorMapperFactory.getContinuousForMatrix(this.data.getData(), Color.BLACK, Color.red));
+    //this.getColoringPane().addMatrixColoringStrategy(ColorMapperFactory.getBlueRedForMatrix(this.data.getData(), 6.5d));
 //		this.getColoringPane().addMatrixColoringStrategy(MatrixColoringStrategyFactory.createRedBlueGradientNoCutOff(matrix));
 //		
 		this.getColoringPane().getZoomMatrixColoringModel().removeAllElements();

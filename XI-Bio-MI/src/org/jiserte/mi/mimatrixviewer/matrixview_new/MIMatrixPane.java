@@ -1,5 +1,6 @@
 package org.jiserte.mi.mimatrixviewer.matrixview_new;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -24,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.jiserte.mi.mimatrixviewer.DataContainer;
+import org.jiserte.mi.mimatrixviewer.matrixview_new.colors.ColorMapper;
 
 public class MIMatrixPane extends JScrollPane {
 	
@@ -56,7 +58,8 @@ public class MIMatrixPane extends JScrollPane {
 	// Amino acid from whole MI Data
 	private Rectangle area;
 	private boolean showArea;
-	
+	private Rectangle selectedRegion;
+	private boolean hasSelectedRegion;
 	///////////////////////////////
 	// Constructor
 	public MIMatrixPane(MatrixViewMainPane viewer) {
@@ -76,7 +79,7 @@ public class MIMatrixPane extends JScrollPane {
 		int[] pixels = new int[16 * 16];
 		Image image = Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(16, 16, pixels, 0, 16));
 		Cursor transparentCursor = Toolkit.getDefaultToolkit().createCustomCursor(image, new Point(0, 0), "invisibleCursor");
-		//this.getImagePane().setCursor(transparentCursor);
+		this.getImagePane().setCursor(transparentCursor);
 		this.showArea = false;
 		
 	}
@@ -133,8 +136,6 @@ public class MIMatrixPane extends JScrollPane {
 				
 				image.setRGB(namesLabelWidth+px, namesLabelWidth+py, this.getColor().getColor(data.getData().getZscoreValue(i+1, j+1)).getRGB());
 				
-				//image.setRGB(namesLabelWidth+px, namesLabelWidth+py, Color.black.getRGB());
-				
 			}
 		}
 		
@@ -169,12 +170,6 @@ public class MIMatrixPane extends JScrollPane {
 		
 		for (int len : this.getProteinLengths()) {
 		
-//			image.getGraphics().setColor(Color.white);
-//			
-//			image.getGraphics().fillRect(offset + region_counter , 0 , len, markerRegionWidth);	
-//			
-//			image.getGraphics().fillRect(0 ,offset+region_counter , markerRegionWidth , len);
-			
 			graphics.setColor(colors[i]);
 			
 			graphics.fillRect(offset + region_counter , 0 , len, markerRegionWidth);	
@@ -228,7 +223,7 @@ public class MIMatrixPane extends JScrollPane {
 		}
 		//////////////////////////
 		this.getImagePane().setSize(image.getWidth(), image.getHeight());
-		System.err.println(image.getWidth() + " x " +  image.getHeight());
+		//System.err.println(image.getWidth() + " x " +  image.getHeight());
 		this.getImagePane().updateUI();
 		return image;
 	}
@@ -355,13 +350,19 @@ public class MIMatrixPane extends JScrollPane {
 					MIMatrixPane.this.setImage(MIMatrixPane.this.createMapImage());
 				}
 				g.drawImage(MIMatrixPane.this.getImage(), 0, 0, null);
+
+        if (MIMatrixPane.this.hasSelectedRegion) {
+          ((Graphics2D)g).setColor(Color.blue);
+          ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.3f));
+          ((Graphics2D)g).fill(MIMatrixPane.this.selectedRegion);
+          ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1f));
+          ((Graphics2D)g).draw(MIMatrixPane.this.selectedRegion);
+        }
 				
 				if (MIMatrixPane.this.showArea) {
-					
-					
 					((Graphics2D)g).setColor(Color.green);
+					((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1f));
 					((Graphics2D)g).draw(MIMatrixPane.this.area);
-					
 				}
 			}
 			
@@ -402,16 +403,42 @@ public class MIMatrixPane extends JScrollPane {
 			areaRect.setBounds(rect.x+30, rect.y+30, w, h);
 			
 			
-			MIMatrixPane.this.area = areaRect;
-			MIMatrixPane.this.showArea = true;
+			MIMatrixPane.this.selectedRegion = areaRect;
+			MIMatrixPane.this.hasSelectedRegion = true;
 			MIMatrixPane.this.updateUI();
 		}
 
+    private void drawZoomInCursor(int mpx,int mpy) {
+      Rectangle rect = new Rectangle();
+      int px = mpx - 30;
+      int py = mpy - 30;
+      px = Math.min(MIMatrixPane.this.data.getData().getSize() - MIMatrixPane.ZOOM_SIZE, px);
+      py = Math.min(MIMatrixPane.this.data.getData().getSize() - MIMatrixPane.ZOOM_SIZE, py);
+      px = Math.max(0, px);
+      py = Math.max(0, py);
+      int w = Math.min(MIMatrixPane.ZOOM_SIZE, MIMatrixPane.this.data.getData().getSize() - px);
+      int h = Math.min(MIMatrixPane.ZOOM_SIZE, MIMatrixPane.this.data.getData().getSize() - py);
+      rect.setBounds(px, py, w, h);
+      
+      Rectangle areaRect = new Rectangle();
+      areaRect.setBounds(rect.x+30, rect.y+30, w, h);
+      
+      MIMatrixPane.this.area = areaRect;
+      MIMatrixPane.this.showArea = true;
+      MIMatrixPane.this.updateUI();
+    }
+		
 		@Override
 		public void mousePressed(MouseEvent e) {}
 
 		@Override
-		public void mouseReleased(MouseEvent e) {}
+		public void mouseReleased(MouseEvent e) {
+    int mpx = e.getX();
+    int mpy = e.getY();
+    if (MIMatrixPane.this.getMatrix()!=null) {
+      exportData(mpx,mpy);
+    }
+		}
 
 		@Override
 		public void mouseEntered(MouseEvent e) {}
@@ -424,11 +451,12 @@ public class MIMatrixPane extends JScrollPane {
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			int mpx = e.getX();
-			int mpy = e.getY();
-			if (MIMatrixPane.this.getMatrix()!=null) {
-				exportData(mpx,mpy);
-			}
+	    int mpx = e.getX();
+	    int mpy = e.getY();
+	    if (MIMatrixPane.this.getMatrix()!=null) {
+	      drawZoomInCursor(mpx,mpy);
+	    }
+
 		}
 		
 	}

@@ -121,9 +121,12 @@ public class MI_Position {
 			
 		}
 		
-		container.format.fillPosition(new_pos,positionLine);
+		if (!container.isNullFormat()) {
+		  container.format.fillPosition(new_pos,positionLine);
+		  return new_pos;
+		}
 		
-		return new_pos;
+		return null; // TODO raise an exception that say that the format cannot be recognized
 		
 	}
 

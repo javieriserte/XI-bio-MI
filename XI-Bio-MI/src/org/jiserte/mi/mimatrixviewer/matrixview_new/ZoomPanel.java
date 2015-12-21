@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.jiserte.mi.mimatrixviewer.MIMatrixViewer;
+import org.jiserte.mi.mimatrixviewer.matrixview_new.colors.ColorMapper;
 
 /**
  * Component that shows a zoom-in portion of a MI matrix.

@@ -1,4 +1,4 @@
-package org.jiserte.mi.mimatrixviewer.matrixview_new;
+package org.jiserte.mi.mimatrixviewer.matrixview_new.colors;
 
 import java.awt.Color;
 
@@ -48,6 +48,16 @@ public class SolidColoringStrategy implements ColoringStrategy {
 	private void setColor(Color color) {
 		this.color = color;
 	}
+
+  @Override
+  public double min() {
+    return this.range.getLowerBound();
+  }
+
+  @Override
+  public double max() {
+    return this.range.getUpperBound();
+  }
 
 
 }

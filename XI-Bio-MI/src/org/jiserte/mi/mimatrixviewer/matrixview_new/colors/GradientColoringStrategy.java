@@ -1,4 +1,4 @@
-package org.jiserte.mi.mimatrixviewer.matrixview_new;
+package org.jiserte.mi.mimatrixviewer.matrixview_new.colors;
 
 import java.awt.Color;
 
@@ -24,12 +24,24 @@ public class GradientColoringStrategy implements ColoringStrategy {
 		
 		double f = (value - getRange().getLowerBound()) / (getRange().getUpperBound()-getRange().getLowerBound());
 		
-		int r = (int) (this.getInitial().getRed() * (1-f) + f * (this.getEnd().getRed()));
-		int g = (int) (this.getInitial().getGreen() * (1-f) + f * (this.getEnd().getGreen()));
-		int b = (int) (this.getInitial().getBlue() * (1-f) + f * (this.getEnd().getBlue()));
-		System.out.println(r + "," +g + "," + b);
-		return new Color(r, g, b);
+    return GradientColoringStrategy.getColorByFraction(this.getInitial(), this.getEnd(), f);
 		
+	}
+	
+	public static Color getColorByFraction(Color lower, Color upper, double f) {
+	  
+	    int r = (int) (lower.getRed() * (1-f) + f * (upper.getRed()));
+	    int g = (int) (lower.getGreen() * (1-f) + f * (upper.getGreen()));
+	    int b = (int) (lower.getBlue() * (1-f) + f * (upper.getBlue()));
+	    //System.out.println(r + "," +g + "," + b);
+	    Color color;
+	    try {
+	      color = new Color(r, g, b);
+	    } catch (Exception e) {
+	      color = Color.black;  
+	    }
+	    return color;
+	  
 	}
 
 	@Override
@@ -63,5 +75,16 @@ public class GradientColoringStrategy implements ColoringStrategy {
 	private void setRange(Range<Double> range) {
 		this.range = range;
 	}
+
+  @Override
+  public double min() {
+    return this.range.getLowerBound();
+  }
+
+  @Override
+  public double max() {
+    // TODO Auto-generated method stub
+    return this.range.getUpperBound();
+  }
 
 }

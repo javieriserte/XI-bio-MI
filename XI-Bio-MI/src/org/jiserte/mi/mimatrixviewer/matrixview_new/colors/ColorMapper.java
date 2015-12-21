@@ -1,4 +1,4 @@
-package org.jiserte.mi.mimatrixviewer.matrixview_new;
+package org.jiserte.mi.mimatrixviewer.matrixview_new.colors;
 
 import java.awt.Color;
 import java.util.List;

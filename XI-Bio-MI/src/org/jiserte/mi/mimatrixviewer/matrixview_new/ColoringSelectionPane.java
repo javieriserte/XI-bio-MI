@@ -10,6 +10,8 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.jiserte.mi.mimatrixviewer.matrixview_new.colors.ColorMapper;
+
 public class ColoringSelectionPane extends JPanel {
 	
 	////////////////////////////////
@@ -132,6 +134,7 @@ public class ColoringSelectionPane extends JPanel {
 		this.setMatrixColoringComboBox(new JComboBox<>(this.getMatrixColoringModel()));
 		ColorSelectedActionListener colorSelectAction = new ColorSelectedActionListener();
 		this.getMatrixColoringComboBox().addActionListener(colorSelectAction );
+		this.getMatrixColoringComboBox().setRenderer(new ColorMapperCellRenderer());
 		this.add(this.getMatrixColoringComboBox());
 		
 		// Label second ComboBox		
@@ -144,6 +147,7 @@ public class ColoringSelectionPane extends JPanel {
 		this.setZoomMatrixColoringModel(new DefaultComboBoxModel<ColorMapper>());
 		this.setZoomMatrixColoringComboBox(new JComboBox<>(this.getZoomMatrixColoringModel()));
 		this.getZoomMatrixColoringComboBox().addActionListener(colorSelectAction);
+		this.getZoomMatrixColoringComboBox().setRenderer(new ColorMapperCellRenderer());
 		this.add(this.getZoomMatrixColoringComboBox());
 		//////////////////////////////
 	}
