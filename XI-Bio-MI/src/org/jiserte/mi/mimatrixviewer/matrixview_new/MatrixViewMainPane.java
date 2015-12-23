@@ -43,9 +43,22 @@ public class MatrixViewMainPane extends MIViewingPane{
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		
 		splitPane.add(this.getZoomPanel());
+		
 		splitPane.add(this.getMatrixPane());
 		
-		//this.getZoomPanel().setColoringStrategy(new BlackAndWhiteZoomMatrixColoringStrategy(10));
+		this.getMatrixPane().addMatrixChangedListener(new MatrixAreaChangedListener() {
+			
+			@Override
+			public void matrixAreaChanged(MatrixAreaChangedEvent e) {
+			  if (e.getAction() == MatrixAreaChangedEvent.SELECTED_AREA) {
+  				MatrixViewMainPane.this.zoomArea(
+  						e.getRect(),
+  						e.getValues(),
+  						e.gethChars(),
+  						e.getvChars());
+  			}
+			}
+		});
 
 		this.add(splitPane, BorderLayout.CENTER);
 		this.add(this.getColoringPane(),BorderLayout.SOUTH);

@@ -17,7 +17,7 @@ public class MutualInfoAnalyzer extends JFrame {
 	private GraphicViewerPane graphicViewerPane;
 	private Model model;
 	private Controller controller;
-
+	
 	
 	public static void main(String[] args) {
 		

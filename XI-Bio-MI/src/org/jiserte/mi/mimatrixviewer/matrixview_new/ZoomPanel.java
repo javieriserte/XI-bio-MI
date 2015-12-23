@@ -25,10 +25,10 @@ public class ZoomPanel extends JScrollPane {
 	////////////////////////////////
 	// Class Constants
 	private static final long serialVersionUID = -5691536429438522274L;
-	private static final int CELL_SIZE = 10;
+	private static final int CELL_SIZE = 5;
 	private static final int CELL_SEP = 1;
 	private static final int HEADER_SIZE = 25;
-	private static final int FONT_SIZE = 12;
+	private static final int FONT_SIZE = 8;
 	private static final String FONT_NAME = "Verdana";
 	////////////////////////////////
 	
