@@ -1,4 +1,8 @@
-package org.jiserte.mi.covdataviewer.datastructures;
+package org.jiserte.mi.mimatrixviewer.datastructures;
+
+import java.util.Arrays;
+
+import org.jiserte.mi.mimatrixviewer.MI_Matrix;
 
 public class CovariationMatrix {
   
@@ -56,6 +60,7 @@ public class CovariationMatrix {
     
     int x = Math.min(nominalPosX, nominalPosY) - 1 ;
     int y = Math.max(nominalPosX, nominalPosY) - 1 ;
+    if (x == y) return MI_Matrix.UNDEFINED;
     int arrayPos = this.translatePositionsFromMatrixToArray(x,y);
     
     return this.getValues()[arrayPos];
@@ -70,7 +75,7 @@ public class CovariationMatrix {
    */
   private int translatePositionsFromMatrixToArray(int absolutePosX,
       int absolutePosY) {
-    return absolutePosY * (absolutePosY - 1) + absolutePosX;
+    return (int) (absolutePosY * (absolutePosY - 1) / 2) + absolutePosX;
   }
 
   private double[] getValues() {
@@ -126,4 +131,8 @@ public class CovariationMatrix {
     return size;
   }
   
+  
+  public double[] getCopyOfValues() {
+    return Arrays.copyOf(this.covariationValues, this.covariationValues.length);
+  }
 }

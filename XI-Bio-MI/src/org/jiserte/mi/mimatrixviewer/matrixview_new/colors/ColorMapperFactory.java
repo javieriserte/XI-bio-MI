@@ -8,6 +8,7 @@ import java.util.List;
 import datatypes.range.Range;
 
 import org.jiserte.mi.mimatrixviewer.MI_Matrix;
+import org.jiserte.mi.mimatrixviewer.datastructures.CovariationMatrix;
 
 /**
  * This class provies many built-in ColorMappers for covariation data.
@@ -27,13 +28,13 @@ public class ColorMapperFactory {
    * gradients. Typically 6.5 for MI.
    * @return
    */
-	public static ColorMapper getBlueRedForMatrix(MI_Matrix matrix, 
+	public static ColorMapper getBlueRedForMatrix(CovariationMatrix matrix, 
 	    double cutoff) {
 
 	  ////////////////////////////////////////////////////////////////////////////
 	  // Get min and max values
-		double min = matrix.getMinZscore();
-		double max = matrix.getMaxZscore();
+		double min = matrix.getMin();
+		double max = matrix.getMax();
     ////////////////////////////////////////////////////////////////////////////
 		
 		////////////////////////////////////////////////////////////////////////////
@@ -79,13 +80,13 @@ public class ColorMapperFactory {
    * @higher is the color for the highest value.
    * @return
    */
-  public static ColorMapper getContinuousForMatrix(MI_Matrix matrix,
+  public static ColorMapper getContinuousForMatrix(CovariationMatrix matrix,
       Color lower, Color higher, boolean useHSBGradient) {
     
     ////////////////////////////////////////////////////////////////////////////
     // Get min and max values
-    double min = matrix.getMinZscore();
-    double max = matrix.getMaxZscore();
+    double min = matrix.getMin();
+    double max = matrix.getMax();
     ////////////////////////////////////////////////////////////////////////////
     
     ////////////////////////////////////////////////////////////////////////////
@@ -127,13 +128,12 @@ public class ColorMapperFactory {
    * @param levels
    * @return
    */
-  public static ColorMapper getPercentilForMatrix(MI_Matrix matrix, Color lower,
+  public static ColorMapper getPercentilForMatrix(CovariationMatrix matrix, Color lower,
       Color higher, int levels, boolean useHSBGradient) {
   
     ////////////////////////////////////////////////////////////////////////////
     // Copy the Z-Score data from the MI Matrix to sort the values. 
-    double[] sorted = Arrays.copyOf( matrix.getZscore(), 
-        matrix.getZscore().length);
+    double[] sorted = matrix.getCopyOfValues();
     Arrays.sort(sorted);
     ////////////////////////////////////////////////////////////////////////////
   
@@ -201,13 +201,13 @@ public class ColorMapperFactory {
    * @param cutoff
    * @return
    */
-	public static ColorMapper getBlackWhiteForZoom(MI_Matrix matrix, 
+	public static ColorMapper getBlackWhiteForZoom(CovariationMatrix matrix, 
 	    double cutoff) {
 		
 	  ////////////////////////////////////////////////////////////////////////////
 	  // Get the minimum and the maximum values.
-		double min = matrix.getMinZscore();
-		double max = matrix.getMaxZscore();
+		double min = matrix.getMin();
+		double max = matrix.getMax();
     ////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////

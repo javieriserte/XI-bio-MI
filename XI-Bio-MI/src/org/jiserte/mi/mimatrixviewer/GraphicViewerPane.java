@@ -8,6 +8,7 @@ import java.util.Observer;
 import javax.swing.JButton;
 import javax.swing.JTabbedPane;
 
+import org.jiserte.mi.mimatrixviewer.datastructures.CovariationData;
 import org.jiserte.mi.mimatrixviewer.matrixview_new.MatrixViewMainPane;
 
 public class GraphicViewerPane extends JTabbedPane implements Observer{
@@ -76,7 +77,7 @@ public class GraphicViewerPane extends JTabbedPane implements Observer{
 
 	@Override
 	public void update(Observable o, Object arg) {
-		DataContainer data = ((Model)o).getCurrentData();
+		CovariationData data = ((Model)o).getCurrentData();
 		
 		if (data!=null) {
 			MIViewingPane selectedComponent = (MIViewingPane)this.getSelectedComponent();

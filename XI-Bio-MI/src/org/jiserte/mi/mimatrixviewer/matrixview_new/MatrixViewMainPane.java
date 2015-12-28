@@ -9,6 +9,7 @@ import javax.swing.JSplitPane;
 import org.jiserte.mi.mimatrixviewer.DataContainer;
 import org.jiserte.mi.mimatrixviewer.MIViewingPane;
 import org.jiserte.mi.mimatrixviewer.MI_Matrix;
+import org.jiserte.mi.mimatrixviewer.datastructures.CovariationData;
 import org.jiserte.mi.mimatrixviewer.matrixview_new.colors.ColorMapperFactory;
 
 public class MatrixViewMainPane extends MIViewingPane{
@@ -21,7 +22,7 @@ public class MatrixViewMainPane extends MIViewingPane{
 	
 	/////////////////////////////////////////
 	// Instance variables
-	private DataContainer data;
+	private CovariationData data;
 	/////////////////////////////////////////
 	
 	/////////////////////////////////////////
@@ -127,24 +128,24 @@ public class MatrixViewMainPane extends MIViewingPane{
 	}
 
 	@Override
-	public void setData(DataContainer data) {
+	public void setData(CovariationData data) {
 		this.data = data;
 		
 		this.getMatrixPane().setData(data);
 		
 		this.getColoringPane().getMatrixColoringModel().removeAllElements();
     this.getColoringPane().addMatrixColoringStrategy(
-        ColorMapperFactory.getPercentilForMatrix(this.data.getData(), 
+        ColorMapperFactory.getPercentilForMatrix(this.data.getMatrix(), 
             Color.yellow.darker().darker(), Color.red, 5,true));
     this.getColoringPane().addMatrixColoringStrategy(
-        ColorMapperFactory.getContinuousForMatrix(this.data.getData(), 
+        ColorMapperFactory.getContinuousForMatrix(this.data.getMatrix(), 
             Color.BLACK, Color.red,false));
     this.getColoringPane().addMatrixColoringStrategy(
-        ColorMapperFactory.getBlueRedForMatrix(this.data.getData(), 6.5d));
+        ColorMapperFactory.getBlueRedForMatrix(this.data.getMatrix(), 6.5d));
 //		
 		this.getColoringPane().getZoomMatrixColoringModel().removeAllElements();
 		this.getColoringPane().addZoomMatrixColoringStrategy(
-		    ColorMapperFactory.getBlackWhiteForZoom(this.data.getData(), 6.5d));
+		    ColorMapperFactory.getBlackWhiteForZoom(this.data.getMatrix(), 6.5d));
 //		this.getColoringPane().addZoomMatrixColoringStrategy(ZoomMatrixColoringStrategyFactory.BlackAndWhiteWithCutoff10());
 		
 	}

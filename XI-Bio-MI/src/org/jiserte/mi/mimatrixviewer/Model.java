@@ -4,19 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
+import org.jiserte.mi.mimatrixviewer.datastructures.CovariationData;
+
 public class Model extends Observable {
 
 	////////////////////////////////////////////////////////////////////////////
 	// Instance Variables
-	private List<DataContainer> data;
-	private DataContainer currentData;
+	private List<CovariationData> data;
+	private CovariationData currentData;
 	////////////////////////////////////////////////////////////////////////////
 
 	////////////////////////////////////////////////////////////////////////////
 	// Contructor
 	public Model() {
 		
-		this.setData(new ArrayList<DataContainer>());
+		this.setData(new ArrayList<CovariationData>());
 		this.setCurrentData(null);
 		
 	}
@@ -25,25 +27,25 @@ public class Model extends Observable {
 	
 	////////////////////////////////////////////////////////////////////////////
 	// Public interface
-	public List<DataContainer> getData() {
+	public List<CovariationData> getData() {
 		return data;
 	}
-	public void setData(List<DataContainer> data) {
+	public void setData(List<CovariationData> data) {
 		this.data = data;
 		this.setChanged();
 		this.notifyObservers();
 		this.clearChanged();
 	}
-	public DataContainer getCurrentData() {
+	public CovariationData getCurrentData() {
 		return currentData;
 	}
-	public void setCurrentData(DataContainer currentData) {
+	public void setCurrentData(CovariationData currentData) {
 		this.currentData = currentData;
 		this.setChanged();
 		this.notifyObservers();
 		this.clearChanged();
 	}
-	public void addDataContainer(DataContainer data) {
+	public void addDataContainer(CovariationData data) {
 		this.getData().add(data);
 		this.setChanged();
 		this.notifyObservers();

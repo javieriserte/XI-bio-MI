@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Observer;
 
+import org.jiserte.mi.mimatrixviewer.datastructures.CovariationData;
+import org.jiserte.mi.mimatrixviewer.readers.CovariationMatrixReader;
+
 public class Controller {
 	
 	private Model model;
@@ -25,12 +28,15 @@ public class Controller {
 		
 		for (File file : selectedFiles) {
 			
-			MIMatrixReader reader = new MIMatrixReader();
+			CovariationMatrixReader reader = new CovariationMatrixReader();
 			
-			MI_Matrix matrix;
+			CovariationData matrix;
 			try {
 				matrix = reader.read(file);
-				this.model.addDataContainer(new DataContainer(matrix, file.getName(), null, null));
+				//this.model.addDataContainer(new DataContainer(matrix, file.getName(), null, null));
+				// new DataContainer(matrix, file.getName(), null, null);
+				// new CovariationData("Unknown", matrix.getReferenceSequence(), matrix)
+				this.model.addDataContainer(matrix);
 								
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -47,14 +53,14 @@ public class Controller {
 		
 	}
 
-	public void setActiveData(DataContainer value) {
+	public void setActiveData(CovariationData value) {
 		
 		this.model.setCurrentData(value);
 		
 	}
 
 	public int getCurrentMatrixSize() {
-		return this.model.getCurrentData().getData().getSize();
+		return this.model.getCurrentData().getMatrixSize();
 	}
 
 	public void setCurrentMatrixNames(List<String> names) {
@@ -83,7 +89,7 @@ public class Controller {
 			
 		}
 		
-		this.model.getCurrentData().setLengths(lengthsArray);
+		this.model.getCurrentData().setProteinLengths(lengthsArray);
 		
 	}
 

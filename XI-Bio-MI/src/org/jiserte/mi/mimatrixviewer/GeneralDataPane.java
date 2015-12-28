@@ -32,6 +32,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.jiserte.mi.mimatrixviewer.datastructures.CovariationData;
+
 public class GeneralDataPane extends JPanel implements Observer{
 
 	////////////////////////////////////////////////////////////////////////////
@@ -53,7 +55,7 @@ public class GeneralDataPane extends JPanel implements Observer{
 	private JTextField protLengthTxt;
 	private JTextArea sequenceTxt;
 	private Controller controller;
-	private JList<DataContainer> dataList;
+	private JList<CovariationData> dataList;
 	////////////////////////////////////////////////////////////////////////////
 
 	public GeneralDataPane(Controller controller) {
@@ -83,8 +85,8 @@ public class GeneralDataPane extends JPanel implements Observer{
 
 		constraints.gridx = 0;
 		constraints.gridy = 0;
-		dataList = new JList<DataContainer>();
-		dataList.setCellRenderer(new MIDataCellRenderer());
+		dataList = new JList<CovariationData>();
+		dataList.setCellRenderer(new CovariationDataCellRenderer());
 		dataList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		dataList.addListSelectionListener(new GeneralOptionDataSelectionListener());
 		this.add(dataList,constraints);
@@ -238,11 +240,11 @@ public class GeneralDataPane extends JPanel implements Observer{
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
 			
-			DataContainer value = GeneralDataPane.this.dataList.getSelectedValue();
+		  CovariationData value = GeneralDataPane.this.dataList.getSelectedValue();
 			
 			if (value!=null) {
 			
-				GeneralDataPane.this.sequenceTxt.setText(value.getData().getReferenceSequenceAsString());
+				GeneralDataPane.this.sequenceTxt.setText(String.valueOf(value.getReferenceSequence()));
 			
 				GeneralDataPane.this.controller.setActiveData(value);
 			
@@ -254,9 +256,9 @@ public class GeneralDataPane extends JPanel implements Observer{
 
 	@Override
 	public void update(Observable o, Object arg) {
-		List<DataContainer> l = ((Model)o).getData();
-		DefaultListModel<DataContainer> a = new DefaultListModel<DataContainer>();
-		for (DataContainer dataContainer : l) {
+		List<CovariationData> l = ((Model)o).getData();
+		DefaultListModel<CovariationData> a = new DefaultListModel<CovariationData>();
+		for (CovariationData dataContainer : l) {
 			a.addElement(dataContainer);
 		}
 		this.dataList.setModel(a);
@@ -283,11 +285,11 @@ public class GeneralDataPane extends JPanel implements Observer{
 		return Arrays.asList(namesArray);
 	}
 
-	class MIDataCellRenderer implements ListCellRenderer<DataContainer> {
+	class CovariationDataCellRenderer implements ListCellRenderer<CovariationData> {
 
 		@Override
 		public Component getListCellRendererComponent(
-				JList<? extends DataContainer> list, DataContainer value,
+				JList<? extends CovariationData> list, CovariationData value,
 				int index, boolean isSelected, boolean cellHasFocus) {
 			
 			int r,gb;
@@ -305,7 +307,7 @@ public class GeneralDataPane extends JPanel implements Observer{
 			Font f = comp.getFont().deriveFont(cellHasFocus?Font.BOLD:Font.PLAIN);
 			comp.setFont(f);
 			panel.add(comp);
-			panel.add(new JLabel(String.valueOf(value.getData().count()) + " elements."));
+			panel.add(new JLabel(String.valueOf(value.getNumberOfElements() + " elements.")));
 
 			return panel;
 			
