@@ -11,7 +11,6 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.jiserte.mi.mimatrixviewer.MIMatrixViewer;
 import org.jiserte.mi.mimatrixviewer.matrixview_new.colors.ColorMapper;
 
 /**

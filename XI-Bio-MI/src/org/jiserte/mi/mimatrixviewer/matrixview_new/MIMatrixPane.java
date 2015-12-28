@@ -26,7 +26,6 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.jiserte.mi.mimatrixviewer.DataContainer;
 import org.jiserte.mi.mimatrixviewer.datastructures.CovariationData;
 import org.jiserte.mi.mimatrixviewer.matrixview_new.colors.ColorMapper;
 

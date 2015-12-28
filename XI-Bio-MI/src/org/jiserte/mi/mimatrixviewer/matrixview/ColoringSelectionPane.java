@@ -10,8 +10,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.jiserte.mi.mimatrixviewer.MIMatrixViewer;
-
 public class ColoringSelectionPane extends JPanel {
 	
 	////////////////////////////////
@@ -151,17 +149,14 @@ public class ColoringSelectionPane extends JPanel {
 	}
 	////////////////////////////////
 
-	////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////
 	// Auxiliary Classes
 	private class ColorSelectedActionListener implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			
 			//ColoringSelectionPane.this.getViewer().ColorSelected();
-			
 		}
-		
 	}
+  //////////////////////////////////////////////////////////////////////////////
 	
 }
