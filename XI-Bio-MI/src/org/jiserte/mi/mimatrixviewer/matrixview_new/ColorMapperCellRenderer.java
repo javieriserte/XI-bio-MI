@@ -47,7 +47,7 @@ public class ColorMapperCellRenderer extends JPanel implements
     return this;
   }
   
-  public void paint(Graphics g) {
+  public void paintComponent(Graphics g) {
     int divisions=5;
     int posX=1;
     int divWidth = (this.getWidth() -1 ) / divisions;
