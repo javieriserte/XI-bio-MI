@@ -91,6 +91,8 @@ public class Controller {
 		
 		this.model.getCurrentData().setProteinLengths(lengthsArray);
 		
+		this.model.getCurrentData().updateProteinMap();
+		
 	}
 
 	

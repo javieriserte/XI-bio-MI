@@ -9,7 +9,11 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,8 +25,10 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -32,7 +38,11 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.jiserte.bioformats.fastaIO.FastaMultipleReader;
 import org.jiserte.mi.mimatrixviewer.datastructures.CovariationData;
+import org.jiserte.mi.mimatrixviewer.datastructures.Track;
+
+import pair.Pair;
 
 public class GeneralDataPane extends JPanel implements Observer{
 
@@ -43,6 +53,8 @@ public class GeneralDataPane extends JPanel implements Observer{
 	private static final String SET_ATTR_FILE_COMMAND = "set";
 	private static final String PICK_DATA_COMMAND = "pick";
 	private static final String SELECT_DATA_COMMAND = "pick";
+	private static final String ADD_TRACK_COMMAND = "addTrack";
+	private static final String ADD_MSA_COMMAND = "addMSA";
 	////////////////////////////////////////////////////////////////////////////
 
 	
@@ -56,7 +68,10 @@ public class GeneralDataPane extends JPanel implements Observer{
 	private JTextArea sequenceTxt;
 	private Controller controller;
 	private JList<CovariationData> dataList;
-	////////////////////////////////////////////////////////////////////////////
+	private JPopupMenu popup;
+
+
+	//////////////////////////////////////////////////////////////////////////////
 
 	public GeneralDataPane(Controller controller) {
 		super();
@@ -83,15 +98,24 @@ public class GeneralDataPane extends JPanel implements Observer{
 		this.setLayout(layout);
 		///////////////////////////
 
+		
+		
+		
+		
 		constraints.gridx = 0;
 		constraints.gridy = 0;
 		dataList = new JList<CovariationData>();
 		dataList.setCellRenderer(new CovariationDataCellRenderer());
 		dataList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		dataList.addMouseListener( new PopupListener()) ;
 		dataList.addListSelectionListener(new GeneralOptionDataSelectionListener());
 		this.add(dataList,constraints);
 		
-		
+	  //...where the GUI is constructed:
+	  //Create the popup menu.
+	  this.popup = new JPopupMenu();
+	  
+	  
 		constraints.gridy = 1;
 		 
 		this.addDataButton = new JButton("Add data File");
@@ -154,26 +178,67 @@ public class GeneralDataPane extends JPanel implements Observer{
 			long time = e.getWhen();
 
 			if (keyModifiers==16) {
-				
+			  
+				////////////////////////////////////////////////////////////////////////
+			  // Add a new file to the data
 				if (actionCommand.equals(ADD_DATA_FILE_COMMAND)) {
-				
 					JFileChooser fileChooser = new JFileChooser();
 					fileChooser.setMultiSelectionEnabled(true);
 					int r = fileChooser.showOpenDialog(GeneralDataPane.this);
-					
 					if (r == JFileChooser.APPROVE_OPTION) {
-						
 						File[] selectedFiles = fileChooser.getSelectedFiles();
-						
 						GeneralDataPane.this.getController().addDataFiles(selectedFiles);
-						
 						GeneralDataPane.this.sequenceTxt.setText(selectedFiles.toString());
-						
 					}
-					
+				}
+        ////////////////////////////////////////////////////////////////////////
+				
+
+				if (actionCommand.equals(ADD_TRACK_COMMAND)) {
+          JFileChooser fileChooser = new JFileChooser();
+          fileChooser.setMultiSelectionEnabled(true);
+          int r = fileChooser.showOpenDialog(GeneralDataPane.this);
+          if (r == JFileChooser.APPROVE_OPTION) {
+            File[] selectedFiles = fileChooser.getSelectedFiles();
+            for (File f : selectedFiles) {
+              try {
+                String description = (String)JOptionPane.showInputDialog(
+                    GeneralDataPane.this,
+                    "Enter a description for the Track in file: " + f.getName() + ".",
+                    "Question",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    null,
+                    f.getName());
+                Track track = Track.fromFile(f, description);
+                dataList.getSelectedValue().addTrack(track);
+              } catch (IOException e1) {
+                e1.printStackTrace();
+              }
+            }
+
+          }
 				}
 				
-				
+				if (actionCommand.equals(ADD_MSA_COMMAND)) {
+				  
+          JFileChooser fileChooser = new JFileChooser();
+          fileChooser.setMultiSelectionEnabled(false);
+          int r = fileChooser.showOpenDialog(GeneralDataPane.this);
+          if (r == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+              FastaMultipleReader reader = new FastaMultipleReader();
+              List<Pair<String, String>> msa = reader.readFile(selectedFile);
+              dataList.getSelectedValue().addMsa(msa);
+            
+            }
+
+          }
+
+				  
+				  
+				}
+
 				if (actionCommand.equals(SET_ATTR_FILE_COMMAND)) {
 					
 				    try {
@@ -236,32 +301,27 @@ public class GeneralDataPane extends JPanel implements Observer{
 	}
 	
 	class GeneralOptionDataSelectionListener implements ListSelectionListener {
-
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
-			
 		  CovariationData value = GeneralDataPane.this.dataList.getSelectedValue();
-			
 			if (value!=null) {
-			
 				GeneralDataPane.this.sequenceTxt.setText(String.valueOf(value.getReferenceSequence()));
-			
 				GeneralDataPane.this.controller.setActiveData(value);
-			
 			}
-			
 		}
-
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
 		List<CovariationData> l = ((Model)o).getData();
-		DefaultListModel<CovariationData> a = new DefaultListModel<CovariationData>();
-		for (CovariationData dataContainer : l) {
-			a.addElement(dataContainer);
+		
+		if (((Model)o).hasDataChanged()) {
+  		DefaultListModel<CovariationData> a = new DefaultListModel<CovariationData>();
+  		for (CovariationData dataContainer : l) {
+  			a.addElement(dataContainer);
+  		}
+  		this.dataList.setModel(a);
 		}
-		this.dataList.setModel(a);
 		
 	}
 	
@@ -286,35 +346,54 @@ public class GeneralDataPane extends JPanel implements Observer{
 	}
 
 	class CovariationDataCellRenderer implements ListCellRenderer<CovariationData> {
-
 		@Override
 		public Component getListCellRendererComponent(
 				JList<? extends CovariationData> list, CovariationData value,
 				int index, boolean isSelected, boolean cellHasFocus) {
-			
-			int r,gb;
+
+		  int r,gb;
 			gb=225;
 			r = isSelected?245:225;
-			
 			JPanel panel = new JPanel();
-			
-			
-			panel.setLayout(new GridLayout(2, 1, 0, 5));
-			
+			panel.setLayout(new GridLayout(3, 1, 0, 5));
 			panel.setOpaque(true);
 			panel.setBackground(new Color(r,gb,gb));
 			JLabel comp = new JLabel(value.getTitle());
 			Font f = comp.getFont().deriveFont(cellHasFocus?Font.BOLD:Font.PLAIN);
 			comp.setFont(f);
 			panel.add(comp);
-			panel.add(new JLabel(String.valueOf(value.getNumberOfElements() + " elements.")));
-
+			panel.add(new JLabel(String.valueOf(value.getNumberOfElements() + " elements. / " + String.valueOf(value.getMatrixSize()) + " columns.")));
+			panel.add(new JLabel(String.valueOf(value.getTrackCount() + " Tracks.")));
 			return panel;
-			
 		}
-
-
 	}
+	
+	class PopupListener extends MouseAdapter {
+    public void mousePressed(MouseEvent e) { maybeShowPopup(e); }
+    public void mouseReleased(MouseEvent e) { maybeShowPopup(e); }
+
+    private void maybeShowPopup(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+          popup.removeAll();
+          JMenuItem menuItem = new JMenuItem("Load a new File");
+          menuItem.setActionCommand(ADD_DATA_FILE_COMMAND);
+          menuItem.addActionListener(new GeneralOptionActionListener());
+          popup.add(menuItem);
+          if (GeneralDataPane.this.dataList.getSelectedIndex() >= 0) {
+            menuItem = new JMenuItem("Add Track.");
+            menuItem.setActionCommand(ADD_TRACK_COMMAND);
+            menuItem.addActionListener(new GeneralOptionActionListener());
+            popup.add(menuItem);
+            menuItem = new JMenuItem("Add MSA.");
+            menuItem.setActionCommand(ADD_MSA_COMMAND);
+            menuItem.addActionListener(new GeneralOptionActionListener());
+            popup.add(menuItem);
+          }
+            popup.show(e.getComponent(),
+                       e.getX(), e.getY());
+        }
+    }
+}
 	
 	
 	

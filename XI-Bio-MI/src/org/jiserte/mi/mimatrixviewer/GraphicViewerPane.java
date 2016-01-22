@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.JButton;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
+import org.jiserte.mi.mimatrixviewer.circosview.CircosViewMainPane;
 import org.jiserte.mi.mimatrixviewer.datastructures.CovariationData;
 import org.jiserte.mi.mimatrixviewer.matrixview_new.MatrixViewMainPane;
 
@@ -33,33 +35,19 @@ public class GraphicViewerPane extends JTabbedPane implements Observer{
 		this.controller.registerModelObserver(this);
 		
 		this.registeredViewingPanes.add(component);
-		
-//		String localPath = "src" + File.separatorChar +
-//		           "utils" + File.separatorChar +
-//		           "mutualinformation" + File.separatorChar +
-//		           "mimatrixviewer" + File.separatorChar +
-//		           "test"  + File.separatorChar +
-//		           "mi_data_test";
-//
-//		File file = new File (localPath);
-//		
-//		MIMatrixReader reader = new MIMatrixReader();
-//		
-//		MI_Matrix a;
-//		try {
-//			a = reader.read(file);
-//			DataContainer data = new DataContainer(a, "Test", new int[]{a.getSize()}, new String[]{"VP1"} );
-			
-//			component.setData(data);
-			
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
+
 		this.addTab("Matrix Viewer", component);
-		this.addTab("Bot�n #2", new JButton("bot�n 2"));
-		this.addTab("Bot�n #3", new JButton("bot�n 3"));
+		this.addTab("Circos Viewer", new CircosViewMainPane());
+//		this.addTab("Bot�n #3", new JButton("bot�n 3"));
+		
+		this.addChangeListener(new ChangeListener() {
+      
+      @Override
+      public void stateChanged(ChangeEvent e) {
+        GraphicViewerPane p = (GraphicViewerPane) e.getSource();
+        ((MIViewingPane) p.getSelectedComponent()).forceDrawing();
+      }
+    });
 		
 	}
 
@@ -79,9 +67,14 @@ public class GraphicViewerPane extends JTabbedPane implements Observer{
 	public void update(Observable o, Object arg) {
 		CovariationData data = ((Model)o).getCurrentData();
 		
+		
 		if (data!=null) {
+	    int componentsCount = GraphicViewerPane.this.getComponentCount();
+	    for (int i =0 ; i< componentsCount ; i++) {
+	      ((MIViewingPane)GraphicViewerPane.this.getComponentAt(i)).setData(data);
+	    }
+
 			MIViewingPane selectedComponent = (MIViewingPane)this.getSelectedComponent();
-			selectedComponent.setData(data);
 			selectedComponent.forceDrawing();
 			
 		} 
