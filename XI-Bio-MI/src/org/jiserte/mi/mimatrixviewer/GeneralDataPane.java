@@ -13,6 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -228,16 +229,22 @@ public class GeneralDataPane extends JPanel implements Observer{
           if (r == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
               FastaMultipleReader reader = new FastaMultipleReader();
-              List<Pair<String, String>> msa = reader.readFile(selectedFile);
-              dataList.getSelectedValue().addMsa(msa);
+              List<Pair<String, String>> msa;
+              try {
+                msa = reader.readFile(selectedFile);
+                dataList.getSelectedValue().addMsa(msa);
+              } catch (FileNotFoundException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+              }
+
             
             }
 
           }
 
 				  
-				  
-				}
+
 
 				if (actionCommand.equals(SET_ATTR_FILE_COMMAND)) {
 					
