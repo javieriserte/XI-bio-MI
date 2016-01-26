@@ -232,6 +232,7 @@ public class GeneralDataPane extends JPanel implements Observer{
               List<Pair<String, String>> msa;
               try {
                 msa = reader.readFile(selectedFile);
+                System.out.println("MSA Loaded: " + msa.size());
                 dataList.getSelectedValue().addMsa(msa);
               } catch (FileNotFoundException e1) {
                 // TODO Auto-generated catch block

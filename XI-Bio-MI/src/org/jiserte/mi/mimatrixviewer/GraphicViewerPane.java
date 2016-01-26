@@ -12,6 +12,7 @@ import javax.swing.event.ChangeListener;
 import org.jiserte.mi.mimatrixviewer.circosview.CircosViewMainPane;
 import org.jiserte.mi.mimatrixviewer.datastructures.CovariationData;
 import org.jiserte.mi.mimatrixviewer.matrixview_new.MatrixViewMainPane;
+import org.jiserte.mi.mimatrixviewer.msaview.MsaViewMainPane;
 
 public class GraphicViewerPane extends JTabbedPane implements Observer{
 
@@ -38,7 +39,7 @@ public class GraphicViewerPane extends JTabbedPane implements Observer{
 
 		this.addTab("Matrix Viewer", component);
 		this.addTab("Circos Viewer", new CircosViewMainPane());
-//		this.addTab("Bot�n #3", new JButton("bot�n 3"));
+		this.addTab("MSA", new MsaViewMainPane());
 		
 		this.addChangeListener(new ChangeListener() {
       

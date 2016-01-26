@@ -74,6 +74,7 @@ public class CovariationData extends Observable{
     this.matrices.add(matrix);
     this.covariatonMethod.add(method);
   }
+  
 
   public String getCovariatonMethod() {
     return covariatonMethod.get(this.selectedMethodIndex);
@@ -194,7 +195,16 @@ public class CovariationData extends Observable{
   public void addMsa(List<Pair<String,String>> msa){
     this.msa = msa;
     this.setChanged();
+    System.out.println("notify Observers");
     this.notifyObservers(MSA_CHANGED);
+  }
+  
+  public boolean hasMsa() {
+    return !this.msa.isEmpty();
+  }
+  
+  public List<Pair<String, String>> getMsa() {
+    return this.msa;
   }
   // ///////////////////////////////////////////////////////////////////////////
 
