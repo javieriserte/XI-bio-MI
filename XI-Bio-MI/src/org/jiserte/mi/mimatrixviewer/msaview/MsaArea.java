@@ -11,6 +11,17 @@ public class MsaArea {
   public static final int COLUMN_SELECTION_MODE = 2;
   public static final int AREA_SELECTION_MODE = 3;
   
+  
+  
+  public MsaArea() {
+    super();
+    this.left = 0;
+    this.right = 0;
+    this.top = 0;
+    this.bottom = 0;
+    this.selectionMode = ROW_SELECTION_MODE;
+  }
+  
   public int getLeft() {
     return left;
   }
@@ -41,5 +52,9 @@ public class MsaArea {
   public void setSelectionMode(int selectionMode) {
     this.selectionMode = selectionMode;
   }
+  public String toString() {
+    return "["+this.getLeft() + ", " + this.getTop() + ", "+ this.getRight() + ", "+ this.getBottom() + "] Mode: "+ getSelectionMode();
+  }
+
 }
 //////////////////////////////////////////////////////////////////////////////

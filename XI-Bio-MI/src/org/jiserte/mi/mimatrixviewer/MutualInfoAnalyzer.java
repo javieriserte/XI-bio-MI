@@ -5,6 +5,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
 import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
@@ -94,7 +95,7 @@ public class MutualInfoAnalyzer extends JFrame {
 		
 		this.generalDataPane = new GeneralDataPane(this.getController());
 		
-	    this.add(this.generalDataPane,constraints);
+	  this.add(this.generalDataPane,constraints);
 		
 //		this.setMinimumSize(new Dimension(512 ,300 ));
 		this.setPreferredSize(new Dimension(1024 ,768 ));
@@ -103,6 +104,8 @@ public class MutualInfoAnalyzer extends JFrame {
 		this.graphicViewerPane = new GraphicViewerPane(this.getController());
 		
 		this.add(this.graphicViewerPane,constraints);
+		
+//		this.add(new JTabbedPane(3),constraints);
 		
 		
 		

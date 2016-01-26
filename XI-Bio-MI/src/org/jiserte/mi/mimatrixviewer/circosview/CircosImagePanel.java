@@ -368,7 +368,6 @@ public class CircosImagePanel extends JPanel {
     }
 
     private BufferedImage createCircosGraphic() {
-
       ////////////////////////////////////////////////////////////////////////
       // Create the bufferedImage object
       BufferedImage bi = new BufferedImage(this.getWidth(), this.getHeight(),

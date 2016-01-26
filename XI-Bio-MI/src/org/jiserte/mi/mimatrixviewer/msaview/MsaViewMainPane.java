@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.jiserte.mi.mimatrixviewer.MIViewingPane;
@@ -32,7 +33,21 @@ public class MsaViewMainPane extends MIViewingPane {
     this.msapane = new MSAPane();
     this.msapane.setColor(new ProteinColor());
     
-    this.add(this.msapane);
+    this.add(this.msapane, BorderLayout.CENTER);
+    
+    JLabel label = new JLabel("HELLO");
+    
+    this.add(label,BorderLayout.SOUTH);
+    
+    this.msapane.addMsaHoverListener(new MsaHoverListener() {
+      
+      @Override
+      public void msaHover(MsaHoverEvent e) {
+        label.setText("Hovering: " + e.column +", "+e.row + " : " + e.c);
+        
+      }
+    });
+    
     
   }
   

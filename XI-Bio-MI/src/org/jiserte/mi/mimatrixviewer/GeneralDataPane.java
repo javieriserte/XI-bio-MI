@@ -189,7 +189,7 @@ public class GeneralDataPane extends JPanel implements Observer{
 					if (r == JFileChooser.APPROVE_OPTION) {
 						File[] selectedFiles = fileChooser.getSelectedFiles();
 						GeneralDataPane.this.getController().addDataFiles(selectedFiles);
-						GeneralDataPane.this.sequenceTxt.setText(selectedFiles.toString());
+//						GeneralDataPane.this.sequenceTxt.setText(selectedFiles.toString());
 					}
 				}
         ////////////////////////////////////////////////////////////////////////
@@ -353,26 +353,32 @@ public class GeneralDataPane extends JPanel implements Observer{
 		return Arrays.asList(namesArray);
 	}
 
-	class CovariationDataCellRenderer implements ListCellRenderer<CovariationData> {
+	class CovariationDataCellRenderer extends JPanel implements ListCellRenderer<CovariationData> {
+	  private final GridLayout layout = new GridLayout(3, 1, 0, 5);
+	  private final Color sel = new Color(225,245,225);
+	  private final Color noSel = new Color(225,225,225);
+	  private JLabel comp = new JLabel();
+	  private JLabel line1 = new JLabel();
+	  private JLabel line2 = new JLabel();
+	  private final Font focus = comp.getFont().deriveFont(Font.BOLD);
+    private final Font plain = comp.getFont().deriveFont(Font.PLAIN);
+	  
 		@Override
 		public Component getListCellRendererComponent(
 				JList<? extends CovariationData> list, CovariationData value,
 				int index, boolean isSelected, boolean cellHasFocus) {
 
-		  int r,gb;
-			gb=225;
-			r = isSelected?245:225;
-			JPanel panel = new JPanel();
-			panel.setLayout(new GridLayout(3, 1, 0, 5));
-			panel.setOpaque(true);
-			panel.setBackground(new Color(r,gb,gb));
-			JLabel comp = new JLabel(value.getTitle());
-			Font f = comp.getFont().deriveFont(cellHasFocus?Font.BOLD:Font.PLAIN);
-			comp.setFont(f);
-			panel.add(comp);
-			panel.add(new JLabel(String.valueOf(value.getNumberOfElements() + " elements. / " + String.valueOf(value.getMatrixSize()) + " columns.")));
-			panel.add(new JLabel(String.valueOf(value.getTrackCount() + " Tracks.")));
-			return panel;
+			this.setLayout(layout);
+			this.setOpaque(true);
+			this.setBackground(isSelected?sel:noSel);
+			comp.setText(value.getTitle());
+			comp.setFont(cellHasFocus?focus:plain);
+			this.add(comp);
+			line1.setText(String.valueOf(value.getNumberOfElements() + " elements. / " + String.valueOf(value.getMatrixSize()) + " columns."));
+			line2.setText(String.valueOf(value.getTrackCount() + " Tracks."));
+			this.add(line1);
+			this.add(line2);
+			return this;
 		}
 	}
 	

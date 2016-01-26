@@ -5,12 +5,14 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.font.FontRenderContext;
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ import java.util.Observer;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JSplitPane;
+import javax.swing.SwingUtilities;
 import javax.swing.plaf.basic.BasicSliderUI.ScrollListener;
 
 import org.jiserte.mi.mimatrixviewer.msaview.color.ProteinColor;
@@ -47,13 +50,15 @@ public class MSAPane extends JPanel {
   private MsaDataObservable msaData;
   private Observer msaObserver;
   private List<MsaHoverListener> listeners;
+  private boolean isSelecting;
+  private MsaArea selection;
+  private Point selectionOrigin;
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////
   // Components
   private JScrollBar hScrBar;
   private JScrollBar vScrBar;
-  private MsaArea selection;
   private DescriptionImagePanel descPanel;
   private SequenceImagePanel seqPanel;
   private ProteinColor color;
@@ -63,6 +68,7 @@ public class MSAPane extends JPanel {
   // Constructor
   public MSAPane() {
     super();
+    this.listeners = new ArrayList<>();
     this.msaObserver = new Observer() {
 
       @Override
@@ -103,19 +109,26 @@ public class MSAPane extends JPanel {
   public void setOffsetY(int offset) {
     this.msaData.setOffsetY(offset);
   }
-  public void setColor(ProteinColor color){
+
+  public void setColor(ProteinColor color) {
     this.color = color;
   }
+
+  public void addMsaHoverListener(MsaHoverListener listener) {
+    this.listeners.add(listener);
+  }
+
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////
   // Private methods
-  
+
   private void notifyListeners(MsaHoverEvent e) {
     for (MsaHoverListener l : this.listeners) {
       l.msaHover(e);
     }
   }
+
   private void createGUI() {
 
     JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -131,21 +144,24 @@ public class MSAPane extends JPanel {
 
     splitPane.setLeftComponent(this.descPanel);
     splitPane.setRightComponent(this.seqPanel);
+
+    MsaHover msaHover = new MsaHover();
+    this.seqPanel.addMouseMotionListener(msaHover);
+    this.seqPanel.addMouseListener(msaHover);
+
     //
     this.hScrBar.addAdjustmentListener(new ScrollBarOffSetsListener());
     //
     this.vScrBar.addAdjustmentListener(new ScrollBarOffSetsListener());
 
     this.seqPanel.addComponentListener(new ComponentListener() {
-
-      @Override
-      public void componentShown(ComponentEvent arg0) {
-      }
-
       @Override
       public void componentResized(ComponentEvent arg0) {
         adjustScrollBars();
+      }
 
+      @Override
+      public void componentShown(ComponentEvent arg0) {
       }
 
       @Override
@@ -171,21 +187,21 @@ public class MSAPane extends JPanel {
       int nRows = this.msaData.getSequences().size();
       int nCols = nRows != 0
           ? this.msaData.getSequences().get(0).getSecond().length() : 0;
-          
+
       if (nCols <= nCharPerRow) {
-        this.hScrBar.setValues(0,1,0, 1);
+        this.hScrBar.setValues(0, 1, 0, 1);
       } else {
         int newXval = Math.min(this.hScrBar.getValue(), nCols - nCharPerRow);
         newXval = Math.max(0, newXval);
-        this.hScrBar.setValues(newXval, nCharPerRow,0, nCols);     
+        this.hScrBar.setValues(newXval, nCharPerRow, 0, nCols);
       }
-      
+
       if (nRows <= nCharPerColumn) {
-        this.vScrBar.setValues(0,1,0, 1);
-      } else { 
+        this.vScrBar.setValues(0, 1, 0, 1);
+      } else {
         int newYval = Math.min(this.vScrBar.getValue(), nRows - nCharPerColumn);
-        newYval = Math.max(0,newYval );
-        this.vScrBar.setValues( newYval, nCharPerColumn, 0, nRows);
+        newYval = Math.max(0, newYval);
+        this.vScrBar.setValues(newYval, nCharPerColumn, 0, nRows);
       }
 
     }
@@ -195,6 +211,20 @@ public class MSAPane extends JPanel {
   //////////////////////////////////////////////////////////////////////////////
   // Auxiliary classes
   private class SequenceImagePanel extends JPanel {
+    int osTop;
+    int osBot;
+    int osLeft;
+    int osRight;
+    int width;
+    int height;
+    int nCharsPerRow;
+    int nCharsPerColumn;
+
+    Color selColorBr = new Color(140, 255, 205);
+    Color selColorBg = new Color(215, 255, 225);
+
+    int charCounterH;
+    int charCounterV;
 
     private static final long serialVersionUID = 5805856155262708418L;
 
@@ -203,30 +233,55 @@ public class MSAPane extends JPanel {
       super.paintComponent(g);
 
       if (!msaData.getSequences().isEmpty()) {
-        
-        int width = this.getWidth();
-        int height = this.getHeight();
-        int nCharsPerRow = width / charWidth;
+        width = this.getWidth();
+        height = this.getHeight();
+        nCharsPerRow = width / charWidth;
 
-        int nCharsPerColumn = height / charHeight;
+        nCharsPerColumn = height / charHeight;
         Font font = new Font(fontName, 1, FontWidth);
         Graphics2D g2d = (Graphics2D) g;
 
+        ////////////////////////////////////////////////////////////////////////
+        // Draw background
         g2d.setColor(Color.white);
         g2d.fillRect(0, 0, width, height);
+        // Draw Background for selection
+
+        if (selection != null) {
+          osTop = selection.getTop() - msaData.getOffsetY();
+          osBot = selection.getBottom() - msaData.getOffsetY();
+          osLeft = selection.getLeft() - msaData.getOffsetX();
+          osRight = selection.getRight() - msaData.getOffsetX();
+
+          osTop = Math.max(0, osTop);
+          osBot = Math.min(nCharsPerColumn, osBot);
+          osLeft = Math.max(0, osLeft);
+          osRight = Math.min(nCharsPerRow, osRight);
+
+          g2d.setColor(selColorBg);
+          g2d.fillRect(osLeft * charWidth, osTop * charHeight,
+              (osRight - osLeft + 1) * charWidth,
+              (osBot - osTop + 1) * charHeight);
+          g2d.setColor(selColorBr);
+          g2d.drawRect(osLeft * charWidth, osTop * charHeight,
+              (osRight - osLeft + 1) * charWidth,
+              (osBot - osTop + 1) * charHeight);
+
+        }
+        ////////////////////////////////////////////////////////////////////////
 
         g2d.setFont(font);
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
             RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         // FontRenderContext frc = g2d.getFontRenderContext();
-        int charCounterH = 0;
-        int charCounterV = 1;
+        charCounterH = 0;
+        charCounterV = 1;
         for (int i = msaData.getOffsetX(); i < msaData.getOffsetX()
             + nCharsPerRow; i++) {
           for (int j = msaData.getOffsetY(); j < msaData.getOffsetY()
               + nCharsPerColumn; j++) {
             char cc = msaData.sequences.get(j).getSecond().charAt(i);
-            Color c = color!=null? color.getColor(cc):Color.BLACK;
+            Color c = color != null ? color.getColor(cc) : Color.BLACK;
             g2d.setColor(c);
             g2d.drawString(String.valueOf(cc), charCounterH * charWidth,
                 charCounterV * charHeight);
@@ -242,7 +297,7 @@ public class MSAPane extends JPanel {
   }
 
   private class DescriptionImagePanel extends JPanel {
-
+    Font font = new Font(fontName, 1, FontWidth);
     private static final long serialVersionUID = 5805856155262708418L;
 
     @Override
@@ -250,14 +305,12 @@ public class MSAPane extends JPanel {
       super.paintComponent(g);
 
       if (!msaData.getSequences().isEmpty()) {
-        
+
         int width = this.getWidth();
         int height = this.getHeight();
-        
-        
 
         int nCharsPerColumn = height / charHeight;
-        Font font = new Font(fontName, 1, FontWidth);
+       
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.white);
         g2d.fillRect(0, 0, width, height);
@@ -267,13 +320,12 @@ public class MSAPane extends JPanel {
             RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         // FontRenderContext frc = g2d.getFontRenderContext();
         int charCounterV = 1;
-          for (int j = msaData.getOffsetY(); j < msaData.getOffsetY()
-              + nCharsPerColumn; j++) {
-            String cd = msaData.getSequences().get(j).getFirst();
-            g2d.drawString(cd, 0, charCounterV * charHeight);
-            charCounterV++;
-          }
-         charCounterV = 1;
+        for (int j = msaData.getOffsetY(); j < msaData.getOffsetY()
+            + nCharsPerColumn; j++) {
+          g2d.drawString(msaData.getSequences().get(j).getFirst(), 0, charCounterV * charHeight);
+          charCounterV++;
+        }
+        charCounterV = 1;
       }
 
     }
@@ -328,42 +380,140 @@ public class MSAPane extends JPanel {
       if (!msaData.getSequences().isEmpty()) {
         int nCols = msaData.sequences.get(0).getSecond().length();
         int nRows = msaData.sequences.size();
-        System.out.println("New OffSets X: " + hScrBar.getValue() + " Y: " + vScrBar.getValue());
-        if (hScrBar.getValue() >= 0
-            && hScrBar.getValue() < nCols
-            && vScrBar.getValue() >= 0
-            && vScrBar.getValue() < nRows) {
-          
+        if (hScrBar.getValue() >= 0 && hScrBar.getValue() < nCols
+            && vScrBar.getValue() >= 0 && vScrBar.getValue() < nRows) {
+
           msaData.setOffsetX(hScrBar.getValue());
           msaData.setOffsetY(vScrBar.getValue());
         }
       }
     }
   }
-  
-  private class MsaHover implements MouseMotionListener{
+
+  private class MsaHover implements MouseMotionListener, MouseListener {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-      // TODO Auto-generated method stub
-      
+      if (SwingUtilities.isLeftMouseButton(e)) {
+
+        ////////////////////////////////////////////////////////////////////////
+        // pan MSA viewport
+        int w = seqPanel.getWidth();
+        int h = seqPanel.getHeight();
+
+        double[] limits = new double[] { 0.1, 0.9 };
+        double[] sizes = new double[] { w, h };
+        int[] coord = new int[] { e.getX(), e.getY() };
+
+        boolean chgH = coord[0] < limits[0] * sizes[0]
+            || coord[0] > limits[1] * sizes[0];
+        boolean chgV = coord[1] < limits[0] * sizes[1]
+            || coord[1] > limits[1] * sizes[1];
+
+        boolean[] chg = new boolean[] { chgH, chgV };
+        JScrollBar[] bars = new JScrollBar[] { hScrBar, vScrBar };
+
+        for (int i = 0; i < chg.length; i++) {
+          JScrollBar bar = bars[i];
+          if (chg[i]) {
+            boolean chgLowerBound = coord[i] < limits[0] * sizes[i];
+            int newValue = Math.max(0,
+                Math.min(bar.getValue() + (chgLowerBound ? -1 : +1),
+                    bar.getMaximum() - bar.getVisibleAmount()));
+            bar.setValues(newValue, bar.getVisibleAmount(), bar.getMinimum(),
+                bar.getMaximum());
+          }
+        }
+        ////////////////////////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////////////////////////////////
+        // Selection
+        Point point = getResiduesPoint(e.getX(), e.getY());
+
+        int[] topbot = point.y < selectionOrigin.y
+            ? new int[] { point.y, selectionOrigin.y }
+            : new int[] { selectionOrigin.y, point.y };
+
+        int[] leftright = point.x < selectionOrigin.x
+            ? new int[] { point.x, selectionOrigin.x }
+            : new int[] { selectionOrigin.x, point.x };
+
+        selection = new MsaArea();
+        selection.setSelectionMode(MsaArea.AREA_SELECTION_MODE);
+        selection.setTop(topbot[0]);
+        selection.setBottom(topbot[1]);
+        selection.setLeft(leftright[0]);
+        selection.setRight(leftright[1]);
+
+        seqPanel.updateUI();
+
+        ////////////////////////////////////////////////////////////////////////
+
+      }
+    }
+
+    private Point getResiduesPoint(int x, int y) {
+
+      int msaWidth = msaData.getSequences().get(0).getSecond().length();
+      int msaHeight = msaData.getSequences().size();
+
+      int column = Math.min(msaWidth - 1, x / charWidth + msaData.getOffsetX());
+
+      int row = Math.min(msaHeight - 1, y / charHeight + msaData.getOffsetY());
+      return new Point(column, row);
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-      
-      int column =e.getX() / charWidth + msaData.getOffsetX();
-      int row = e.getY() / charHeight + msaData.getOffsetY();
+
+      Point point = getResiduesPoint(e.getX(), e.getY());
+
       MsaHoverEvent event = new MsaHoverEvent();
-      event.column = column;
-      event.row = row;
-      event.description = msaData.getSequences().get(row).getFirst();
-      event.c = event.description.charAt(column);
-      
+      event.column = point.x;
+      event.row = point.y;
+      event.description = msaData.getSequences().get(point.y).getFirst();
+      event.c = msaData.getSequences().get(point.y).getSecond().charAt(point.x);
+
       notifyListeners(event);
-      
+
     }
-    
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+      if (SwingUtilities.isLeftMouseButton(e) && !isSelecting) {
+        selection = null;
+        seqPanel.updateUI();
+        System.gc();
+      }
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+      if (SwingUtilities.isLeftMouseButton(e)) {
+        selectionOrigin = this.getResiduesPoint(e.getX(), e.getY());
+        isSelecting = true;
+      }
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+      isSelecting = false;
+
+    }
+
   }
 
   //////////////////////////////////////////////////////////////////////////////
