@@ -3,12 +3,24 @@ package org.jiserte.mi.mimatrixviewer;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+
+import org.jiserte.mi.mimatrixviewer.circosview.CircosViewMainPane;
+import org.jiserte.mi.mimatrixviewer.matrixview_new.MatrixViewMainPane;
+import org.jiserte.mi.mimatrixviewer.msaview.MsaArea;
+import org.jiserte.mi.mimatrixviewer.msaview.MsaSelectionEvent;
+import org.jiserte.mi.mimatrixviewer.msaview.MsaSelectionListener;
+import org.jiserte.mi.mimatrixviewer.msaview.MsaViewMainPane;
+
+import pair.Pair;
 
 public class MutualInfoAnalyzer extends JFrame {
 
@@ -101,13 +113,30 @@ public class MutualInfoAnalyzer extends JFrame {
 		this.setPreferredSize(new Dimension(1024 ,768 ));
 
 		constraints.gridx = 1;
-		this.graphicViewerPane = new GraphicViewerPane(this.getController());
+		
+		List<Pair<String, MIViewingPane>> tabs = new ArrayList<>();
+		tabs.add(new Pair<>("Matrix Viewer", new MatrixViewMainPane()));
+		tabs.add(new Pair<>("Circos Viewer", new CircosViewMainPane()));
+		MsaViewMainPane msaViewer = new MsaViewMainPane();
+		msaViewer.addMsaSelectionListener(new MsaSelectionListener() {
+      
+      @Override
+      public void msaSelectionDone(MsaSelectionEvent event) {
+        MsaArea selection = event.getSelection();
+        if (event.getSelection() != null) {
+          String msg = "Sel["+selection.getLeft()+" "+ selection.getTop() + " " + selection.getRight() + " " + selection.getBottom()+"]";
+          MutualInfoAnalyzer.this.generalDataPane.setInfo(msg);
+        } else {
+          MutualInfoAnalyzer.this.generalDataPane.setInfo("Nothing Selected");
+        }
+      }
+    });
+		
+    tabs.add(new Pair<>("MSA viewer", msaViewer));
+		
+		this.graphicViewerPane = new GraphicViewerPane(this.getController(), tabs);
 		
 		this.add(this.graphicViewerPane,constraints);
-		
-//		this.add(new JTabbedPane(3),constraints);
-		
-		
 		
 	}
 	

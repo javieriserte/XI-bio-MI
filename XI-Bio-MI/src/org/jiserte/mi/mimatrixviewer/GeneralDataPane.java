@@ -70,6 +70,7 @@ public class GeneralDataPane extends JPanel implements Observer{
 	private Controller controller;
 	private JList<CovariationData> dataList;
 	private JPopupMenu popup;
+	private JLabel infoLabel;
 
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -90,8 +91,8 @@ public class GeneralDataPane extends JPanel implements Observer{
 		GridBagConstraints constraints = new GridBagConstraints();
 		layout.columnWidths = new int[]{250,50};
 		layout.columnWeights = new double[]{1,0};
-		layout.rowHeights = new  int[]{0,25,25,25,25,0};
-		layout.rowWeights = new  double[]{1,0,0,0,0,1};
+		layout.rowHeights = new  int[]{0,25,25,25,25,0,25};
+		layout.rowWeights = new  double[]{1,0,0,0,0,1,0};
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.gridheight = 1;
 		constraints.gridwidth = 2;
@@ -159,6 +160,17 @@ public class GeneralDataPane extends JPanel implements Observer{
 		this.setLengthsAndNamesButton.addActionListener(generalActionListener);
 		this.add(this.setLengthsAndNamesButton,constraints);
 		
+    constraints.gridx = 0;
+    constraints.gridy = 6;
+    constraints.gridheight = 1;
+    constraints.gridwidth = 2;
+    this.infoLabel = new JLabel("No info");
+    this.add(this.infoLabel,constraints);
+		
+	}
+	
+	public void setInfo(String info) {
+	  this.infoLabel.setText(info);
 	}
 	
 	public Controller getController() {

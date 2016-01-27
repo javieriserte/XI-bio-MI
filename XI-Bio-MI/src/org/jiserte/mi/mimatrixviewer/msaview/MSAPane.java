@@ -2,6 +2,7 @@ package org.jiserte.mi.mimatrixviewer.msaview;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -21,11 +22,14 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 import javax.swing.plaf.basic.BasicSliderUI.ScrollListener;
+import javax.swing.plaf.basic.BasicSplitPaneDivider;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import org.jiserte.mi.mimatrixviewer.msaview.color.ProteinColor;
 
@@ -43,13 +47,16 @@ public class MSAPane extends JPanel {
   private static final int charHeight = 15;
   private static final int FontWidth = 15;
   private static final String fontName = "Arial";
+  private static final int HOVER_EVENT=1;
+  private static final int SELECTION_EVENT=2;
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////////
   // Instance variables
   private MsaDataObservable msaData;
   private Observer msaObserver;
-  private List<MsaHoverListener> listeners;
+  private List<MsaHoverListener> hoverListeners;
+  private List<MsaSelectionListener> selectionListeners;
   private boolean isSelecting;
   private MsaArea selection;
   private Point selectionOrigin;
@@ -68,7 +75,8 @@ public class MSAPane extends JPanel {
   // Constructor
   public MSAPane() {
     super();
-    this.listeners = new ArrayList<>();
+    this.hoverListeners = new ArrayList<>();
+    this.selectionListeners = new ArrayList<>();
     this.msaObserver = new Observer() {
 
       @Override
@@ -115,7 +123,11 @@ public class MSAPane extends JPanel {
   }
 
   public void addMsaHoverListener(MsaHoverListener listener) {
-    this.listeners.add(listener);
+    this.hoverListeners.add(listener);
+  }
+
+  public void addMsaSelectionListener(MsaSelectionListener listener) {
+    this.selectionListeners.add(listener);
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -123,9 +135,18 @@ public class MSAPane extends JPanel {
   //////////////////////////////////////////////////////////////////////////////
   // Private methods
 
-  private void notifyListeners(MsaHoverEvent e) {
-    for (MsaHoverListener l : this.listeners) {
-      l.msaHover(e);
+  private void notifyListeners(int type, Object event) {
+    switch (type){
+    case HOVER_EVENT:
+      for (MsaHoverListener l : this.hoverListeners) {
+        l.msaHover( (MsaHoverEvent) event);
+      }
+      break;
+    case SELECTION_EVENT:
+      for (MsaSelectionListener l : this.selectionListeners) {
+        l.msaSelectionDone( (MsaSelectionEvent) event);
+      }
+      break;
     }
   }
 
@@ -133,14 +154,16 @@ public class MSAPane extends JPanel {
 
     JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
     splitPane.setResizeWeight(0);
-    splitPane.setDividerLocation(0.3);
-    splitPane.setDividerSize(10);
+    splitPane.setDividerLocation(200);
+    splitPane.setDividerSize(15);
+    
 
     this.seqPanel = new SequenceImagePanel();
     this.descPanel = new DescriptionImagePanel();
     this.setLayout(new BorderLayout());
     this.hScrBar = new JScrollBar(JScrollBar.HORIZONTAL, 0, 1, 0, 1);
     this.vScrBar = new JScrollBar(JScrollBar.VERTICAL, 0, 1, 0, 1);
+    this.descPanel.setPreferredSize(new Dimension(200, 0));
 
     splitPane.setLeftComponent(this.descPanel);
     splitPane.setRightComponent(this.seqPanel);
@@ -270,6 +293,13 @@ public class MSAPane extends JPanel {
         }
         ////////////////////////////////////////////////////////////////////////
 
+        ////////////////////////////////////////////////////////////////////////
+        // Draw border
+        g2d.setColor(Color.gray);
+        g2d.drawLine(0, 0, width , 0);
+        g2d.drawLine(0, 0,  0, height);
+        ////////////////////////////////////////////////////////////////////////
+        
         g2d.setFont(font);
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
             RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -309,11 +339,21 @@ public class MSAPane extends JPanel {
         int width = this.getWidth();
         int height = this.getHeight();
 
+        
+        
         int nCharsPerColumn = height / charHeight;
        
         Graphics2D g2d = (Graphics2D) g;
+        
+
+        
         g2d.setColor(Color.white);
         g2d.fillRect(0, 0, width, height);
+
+        g2d.setColor(Color.gray);
+        g2d.drawLine(0, 0, width , 0);
+        g2d.drawLine(width-1, 0,  width-1, height);
+
         g2d.setFont(font);
         g2d.setColor(Color.black);
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
@@ -474,16 +514,19 @@ public class MSAPane extends JPanel {
       event.description = msaData.getSequences().get(point.y).getFirst();
       event.c = msaData.getSequences().get(point.y).getSecond().charAt(point.x);
 
-      notifyListeners(event);
+      notifyListeners(HOVER_EVENT ,event);
 
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-      if (SwingUtilities.isLeftMouseButton(e) && !isSelecting) {
+      if (SwingUtilities.isLeftMouseButton(e) ) {
         selection = null;
         seqPanel.updateUI();
-        System.gc();
+        MsaSelectionEvent ev = new MsaSelectionEvent();
+        ev.setSender(MSAPane.this);
+        ev.setSelection(selection);
+        notifyListeners(SELECTION_EVENT, ev);        
       }
     }
 
@@ -511,7 +554,10 @@ public class MSAPane extends JPanel {
     @Override
     public void mouseReleased(MouseEvent e) {
       isSelecting = false;
-
+      MsaSelectionEvent ev = new MsaSelectionEvent();
+      ev.setSender(MSAPane.this);
+      ev.setSelection(selection);
+      notifyListeners(SELECTION_EVENT, ev);
     }
 
   }

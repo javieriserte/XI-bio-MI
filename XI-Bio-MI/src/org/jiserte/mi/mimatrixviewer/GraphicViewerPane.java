@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -14,6 +15,8 @@ import org.jiserte.mi.mimatrixviewer.datastructures.CovariationData;
 import org.jiserte.mi.mimatrixviewer.matrixview_new.MatrixViewMainPane;
 import org.jiserte.mi.mimatrixviewer.msaview.MsaViewMainPane;
 
+import pair.Pair;
+
 public class GraphicViewerPane extends JTabbedPane implements Observer{
 
 	private static final long serialVersionUID = -3653200229915752191L;
@@ -22,24 +25,29 @@ public class GraphicViewerPane extends JTabbedPane implements Observer{
 
 	
 	
-	public GraphicViewerPane(Controller controller) {
+	public GraphicViewerPane(Controller controller, List<Pair<String, MIViewingPane>> tabs) {
 		super();
 		this.setController(controller);
 		this.registeredViewingPanes = new ArrayList<>();
-		this.createGUI();
+		this.createGUI(tabs);
 		
 	}
 
-	private void createGUI() {
+	private void createGUI(List<Pair<String, MIViewingPane>> tabs) {
 		
-		MatrixViewMainPane component = new MatrixViewMainPane();
+//		MatrixViewMainPane component = new MatrixViewMainPane();
 		this.controller.registerModelObserver(this);
 		
-		this.registeredViewingPanes.add(component);
+		
 
-		this.addTab("Matrix Viewer", component);
-		this.addTab("Circos Viewer", new CircosViewMainPane());
-		this.addTab("MSA", new MsaViewMainPane());
+		for (Pair<String, MIViewingPane> tab : tabs) {
+	    this.addTab(tab.getFirst(), tab.getSecond());
+	    this.registeredViewingPanes.add((MIViewingPane)tab.getSecond());
+		}
+//		this.addTab("Matrix Viewer", component);
+//		this.addTab("Circos Viewer", new CircosViewMainPane());
+//		this.addTab("MSA", new MsaViewMainPane());
+		
 		
 		this.addChangeListener(new ChangeListener() {
       
