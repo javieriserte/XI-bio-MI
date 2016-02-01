@@ -33,6 +33,7 @@ import org.jiserte.mi.misticmod.datastructures.MI_PositionLineParser;
  * @author Javier
  *
  */
+@Deprecated
 public class MIMatrixReader {
 
 	public MI_Matrix read(BufferedReader in) throws IOException {

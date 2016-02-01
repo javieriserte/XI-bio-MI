@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+@Deprecated
 public class OptionsPane extends JPanel {
 
 	///////////////////////////////

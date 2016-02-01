@@ -5,15 +5,11 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.jiserte.mi.mimatrixviewer.datastructures.CovariationData;
-import org.jiserte.mi.mimatrixviewer.view.circosview.CircosViewMainPane;
-import org.jiserte.mi.mimatrixviewer.view.matrixview.MatrixViewMainPane;
-import org.jiserte.mi.mimatrixviewer.view.msaview.MsaViewMainPane;
 
 import pair.Pair;
 

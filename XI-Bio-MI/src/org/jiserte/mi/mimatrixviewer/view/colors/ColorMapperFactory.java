@@ -7,7 +7,6 @@ import java.util.List;
 
 import datatypes.range.Range;
 
-import org.jiserte.mi.mimatrixviewer.MI_Matrix;
 import org.jiserte.mi.mimatrixviewer.datastructures.CovariationMatrix;
 
 /**
@@ -60,7 +59,7 @@ public class ColorMapperFactory {
     ////////////////////////////////////////////////////////////////////////////
     // Color strategy for undefined values
 		coloringMethods.add(new SolidColoringStrategy(new Range<Double>(
-		    MI_Matrix.UNDEFINED, MI_Matrix.UNDEFINED, true, true), Color.green));
+		    CovariationMatrix.UNDEFINED, CovariationMatrix.UNDEFINED, true, true), Color.green));
     ////////////////////////////////////////////////////////////////////////////
 
 		////////////////////////////////////////////////////////////////////////////
@@ -104,7 +103,8 @@ public class ColorMapperFactory {
     ////////////////////////////////////////////////////////////////////////////
     // Color strategy for undefined values
     coloringMethods.add(new SolidColoringStrategy(new Range<Double>(
-        MI_Matrix.UNDEFINED, MI_Matrix.UNDEFINED, true, true), Color.green));
+        CovariationMatrix.UNDEFINED, CovariationMatrix.UNDEFINED, true, true), 
+        Color.green));
     ////////////////////////////////////////////////////////////////////////////
     
     ////////////////////////////////////////////////////////////////////////////
@@ -140,7 +140,7 @@ public class ColorMapperFactory {
     ////////////////////////////////////////////////////////////////////////////
     // From the sorted values, get the index of the lower defined value. 
     int li = 0;
-    while(li< sorted.length && sorted[li] == MI_Matrix.UNDEFINED) {
+    while(li< sorted.length && sorted[li] == CovariationMatrix.UNDEFINED) {
       li++;
     }
     ////////////////////////////////////////////////////////////////////////////
@@ -181,7 +181,7 @@ public class ColorMapperFactory {
     ////////////////////////////////////////////////////////////////////////////
     // Add a color strategy for undefined values 
     coloringMethods.add(new SolidColoringStrategy(new Range<Double>(
-        MI_Matrix.UNDEFINED, MI_Matrix.UNDEFINED, true, true), Color.green));
+        CovariationMatrix.UNDEFINED, CovariationMatrix.UNDEFINED, true, true), Color.green));
     ////////////////////////////////////////////////////////////////////////////
     
     ////////////////////////////////////////////////////////////////////////////
@@ -231,7 +231,7 @@ public class ColorMapperFactory {
 		////////////////////////////////////////////////////////////////////////////
 		// Color strategy for undefined values
 		coloringMethods.add(new SolidColoringStrategy(new Range<Double>(
-		    MI_Matrix.UNDEFINED, MI_Matrix.UNDEFINED, true, true), Color.green));
+		    CovariationMatrix.UNDEFINED, CovariationMatrix.UNDEFINED, true, true), Color.green));
     ////////////////////////////////////////////////////////////////////////////
 		
 		////////////////////////////////////////////////////////////////////////////

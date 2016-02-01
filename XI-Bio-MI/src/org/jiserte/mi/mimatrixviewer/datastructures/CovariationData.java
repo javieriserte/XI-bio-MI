@@ -3,9 +3,11 @@ package org.jiserte.mi.mimatrixviewer.datastructures;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
+import java.util.Set;
 
 import collections.rangemap.RangeMap;
 import datatypes.range.Range;
@@ -19,6 +21,7 @@ public class CovariationData extends Observable{
   public static final int TRACKS_CHANGED = 1;
   public static final int PROTEIN_LENGTHS_CHANGED = 2;
   public static final int MSA_CHANGED = 2;  
+  public static final int POSITIVES_CHANGED = 2;
   // ///////////////////////////////////////////////////////////////////////////
 
   // ///////////////////////////////////////////////////////////////////////////
@@ -31,7 +34,7 @@ public class CovariationData extends Observable{
   private int selectedMethodIndex;
   private int numberOfElements;
   private List<Track> tracks;
-  private List<Pair<Integer, Integer>> positives;
+  private Set<Pair<Integer, Integer>> positives; 
   private String title;
   private RangeMap<Integer, Integer> proteinMap;
   private List<Pair<String,String>> msa;
@@ -56,7 +59,7 @@ public class CovariationData extends Observable{
     this.selectedMethodIndex = 0;
     this.tracks = new ArrayList<>();
     this.setTitle("");
-    this.positives = new ArrayList<>();
+    this.positives = new HashSet<Pair<Integer, Integer>>();
     this.msa = new ArrayList<>();
       
   }
@@ -195,7 +198,6 @@ public class CovariationData extends Observable{
   public void addMsa(List<Pair<String,String>> msa){
     this.msa = msa;
     this.setChanged();
-    System.out.println("notify Observers");
     this.notifyObservers(MSA_CHANGED);
   }
   
@@ -206,6 +208,24 @@ public class CovariationData extends Observable{
   public List<Pair<String, String>> getMsa() {
     return this.msa;
   }
+  
+  public void addPositives(Set<Pair<Integer, Integer>> pairs) {
+    this.positives.clear();
+    this.positives.addAll(pairs);
+    this.setChanged();
+    this.notifyObservers(POSITIVES_CHANGED);
+  }
+  
+  public boolean hasPositives() {
+     return !this.positives.isEmpty();    
+    
+  }
+  
+  public Set<Pair<Integer, Integer>> getPositives() {
+    return this.positives;
+  }
   // ///////////////////////////////////////////////////////////////////////////
+
+
 
 }

@@ -2,15 +2,16 @@ package org.jiserte.mi.mimatrixviewer.datastructures;
 
 import java.util.Arrays;
 
-import org.jiserte.mi.mimatrixviewer.MI_Matrix;
-
 public class CovariationMatrix {
+  
+  public static final double UNDEFINED = Double.NEGATIVE_INFINITY; 
   
   private double     [] covariationValues;
   private double        minValue;
   private boolean       recalcMinMax;
   private double        maxValue;
   private int size;
+  
   
   public CovariationMatrix(int size) {
     super();
@@ -60,7 +61,7 @@ public class CovariationMatrix {
     
     int x = Math.min(nominalPosX, nominalPosY) - 1 ;
     int y = Math.max(nominalPosX, nominalPosY) - 1 ;
-    if (x == y) return MI_Matrix.UNDEFINED;
+    if (x == y) return CovariationMatrix.UNDEFINED;
     int arrayPos = this.translatePositionsFromMatrixToArray(x,y);
     
     return this.getValues()[arrayPos];

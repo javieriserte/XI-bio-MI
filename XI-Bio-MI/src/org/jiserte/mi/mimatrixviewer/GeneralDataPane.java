@@ -11,15 +11,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -34,7 +37,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -52,10 +54,11 @@ public class GeneralDataPane extends JPanel implements Observer{
 	private static final long serialVersionUID = 1052136447205136958L;
 	private static final String ADD_DATA_FILE_COMMAND = "add";
 	private static final String SET_ATTR_FILE_COMMAND = "set";
-	private static final String PICK_DATA_COMMAND = "pick";
-	private static final String SELECT_DATA_COMMAND = "pick";
+//	private static final String PICK_DATA_COMMAND = "pick";
+//	private static final String SELECT_DATA_COMMAND = "pick";
 	private static final String ADD_TRACK_COMMAND = "addTrack";
 	private static final String ADD_MSA_COMMAND = "addMSA";
+	private static final String ADD_POSITIVES_COMMAND = "addPositives";
 	////////////////////////////////////////////////////////////////////////////
 
 	
@@ -187,8 +190,8 @@ public class GeneralDataPane extends JPanel implements Observer{
 		public void actionPerformed(ActionEvent e) {
 			String actionCommand = e.getActionCommand();
 			int keyModifiers = e.getModifiers();
-			Object src = e.getSource();
-			long time = e.getWhen();
+//			Object src = e.getSource();
+//			long time = e.getWhen();
 
 			if (keyModifiers==16) {
 			  
@@ -233,6 +236,42 @@ public class GeneralDataPane extends JPanel implements Observer{
           }
 				}
 				
+				
+				
+        if (actionCommand.equals(ADD_POSITIVES_COMMAND)) {
+          
+          JFileChooser fileChooser = new JFileChooser();
+          fileChooser.setMultiSelectionEnabled(false);
+          int r = fileChooser.showOpenDialog(GeneralDataPane.this);
+          if (r == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+              FastaMultipleReader reader = new FastaMultipleReader();
+              List<Pair<String, String>> msa;
+              try {
+                msa = reader.readFile(selectedFile);
+                BufferedReader br = new BufferedReader(new FileReader(selectedFile));
+                
+                Set<Pair<Integer,Integer>> pairs = new HashSet<>();
+                String currentLine = null;
+                while ( (currentLine = br.readLine()) != null) {
+                  String[] fields = currentLine.split("\\s+");
+                  if (fields.length==2) {
+                    Pair<Integer, Integer> p = new Pair<>(Integer.valueOf(fields[0]),Integer.valueOf(fields[1]));
+                    pairs.add(p);
+                  }
+                }
+                dataList.getSelectedValue().addPositives(pairs);
+              } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+              }
+
+            
+            }
+
+          }
+				
+				
 				if (actionCommand.equals(ADD_MSA_COMMAND)) {
 				  
           JFileChooser fileChooser = new JFileChooser();
@@ -244,7 +283,6 @@ public class GeneralDataPane extends JPanel implements Observer{
               List<Pair<String, String>> msa;
               try {
                 msa = reader.readFile(selectedFile);
-                System.out.println("MSA Loaded: " + msa.size());
                 dataList.getSelectedValue().addMsa(msa);
               } catch (FileNotFoundException e1) {
                 // TODO Auto-generated catch block
@@ -366,7 +404,11 @@ public class GeneralDataPane extends JPanel implements Observer{
 	}
 
 	class CovariationDataCellRenderer extends JPanel implements ListCellRenderer<CovariationData> {
-	  private final GridLayout layout = new GridLayout(3, 1, 0, 5);
+	  /**
+     * 
+     */
+    private static final long serialVersionUID = 2565584652245559927L;
+    private final GridLayout layout = new GridLayout(3, 1, 0, 5);
 	  private final Color sel = new Color(225,245,225);
 	  private final Color noSel = new Color(225,225,225);
 	  private JLabel comp = new JLabel();
@@ -412,6 +454,10 @@ public class GeneralDataPane extends JPanel implements Observer{
             popup.add(menuItem);
             menuItem = new JMenuItem("Add MSA.");
             menuItem.setActionCommand(ADD_MSA_COMMAND);
+            menuItem.addActionListener(new GeneralOptionActionListener());
+            popup.add(menuItem);
+            menuItem = new JMenuItem("Add Positives.");
+            menuItem.setActionCommand(ADD_POSITIVES_COMMAND);
             menuItem.addActionListener(new GeneralOptionActionListener());
             popup.add(menuItem);
           }

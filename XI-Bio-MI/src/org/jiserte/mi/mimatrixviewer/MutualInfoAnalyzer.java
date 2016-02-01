@@ -6,9 +6,7 @@ import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
@@ -19,6 +17,7 @@ import org.jiserte.mi.mimatrixviewer.view.msaview.MsaArea;
 import org.jiserte.mi.mimatrixviewer.view.msaview.MsaSelectionEvent;
 import org.jiserte.mi.mimatrixviewer.view.msaview.MsaSelectionListener;
 import org.jiserte.mi.mimatrixviewer.view.msaview.MsaViewMainPane;
+import org.jiserte.mi.mimatrixviewer.view.positives.PositiveDataMainViewingPane;
 
 import pair.Pair;
 
@@ -117,6 +116,7 @@ public class MutualInfoAnalyzer extends JFrame {
 		List<Pair<String, MIViewingPane>> tabs = new ArrayList<>();
 		tabs.add(new Pair<>("Matrix Viewer", new MatrixViewMainPane()));
 		tabs.add(new Pair<>("Circos Viewer", new CircosViewMainPane()));
+		tabs.add(new Pair<>("Positives", new PositiveDataMainViewingPane()));
 		MsaViewMainPane msaViewer = new MsaViewMainPane();
 		msaViewer.addMsaSelectionListener(new MsaSelectionListener() {
       

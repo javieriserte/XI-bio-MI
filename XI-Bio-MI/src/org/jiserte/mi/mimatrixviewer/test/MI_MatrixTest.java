@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import org.jiserte.mi.mimatrixviewer.MI_Matrix;
 
+@SuppressWarnings("deprecation")
 public class MI_MatrixTest extends MI_Matrix {
 
 	

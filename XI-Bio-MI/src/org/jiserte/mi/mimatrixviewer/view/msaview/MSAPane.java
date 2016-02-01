@@ -15,21 +15,15 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.font.FontRenderContext;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
-import javax.swing.plaf.basic.BasicSliderUI.ScrollListener;
-import javax.swing.plaf.basic.BasicSplitPaneDivider;
-import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import org.jiserte.mi.mimatrixviewer.view.colors.ProteinColor;
 
@@ -57,7 +51,7 @@ public class MSAPane extends JPanel {
   private Observer msaObserver;
   private List<MsaHoverListener> hoverListeners;
   private List<MsaSelectionListener> selectionListeners;
-  private boolean isSelecting;
+//  private boolean isSelecting;
   private MsaArea selection;
   private Point selectionOrigin;
   //////////////////////////////////////////////////////////////////////////////
@@ -546,14 +540,14 @@ public class MSAPane extends JPanel {
     public void mousePressed(MouseEvent e) {
       if (SwingUtilities.isLeftMouseButton(e)) {
         selectionOrigin = this.getResiduesPoint(e.getX(), e.getY());
-        isSelecting = true;
+//        isSelecting = true;
       }
 
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-      isSelecting = false;
+//      isSelecting = false;
       MsaSelectionEvent ev = new MsaSelectionEvent();
       ev.setSender(MSAPane.this);
       ev.setSelection(selection);

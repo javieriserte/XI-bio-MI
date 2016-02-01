@@ -10,6 +10,7 @@ import java.util.Map;
  * @author javier iserte
  *
  */
+@Deprecated
 public class MI_Matrix {
 	public static final double UNDEFINED = Double.NEGATIVE_INFINITY; 
 	

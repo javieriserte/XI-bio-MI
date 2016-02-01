@@ -1,6 +1,6 @@
 package org.jiserte.mi.mimatrixviewer;
 
-
+@Deprecated
 public class DataContainer {
 
 	private MI_Matrix data;

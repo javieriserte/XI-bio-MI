@@ -3,7 +3,6 @@ package org.jiserte.mi.mimatrixviewer;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.Rectangle;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
@@ -12,17 +11,12 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
-import org.jiserte.mi.mimatrixviewer.matrixview_to_be_deleted.BlackAndWhiteZoomMatrixColoringStrategy;
 import org.jiserte.mi.mimatrixviewer.matrixview_to_be_deleted.ColoringSelectionPane;
-import org.jiserte.mi.mimatrixviewer.matrixview_to_be_deleted.MIMatrixPane;
-import org.jiserte.mi.mimatrixviewer.matrixview_to_be_deleted.MatrixColoringStrategyFactory;
 import org.jiserte.mi.mimatrixviewer.matrixview_to_be_deleted.MatrixViewMainPane;
-import org.jiserte.mi.mimatrixviewer.matrixview_to_be_deleted.ZoomMatrixColoringStrategyFactory;
 import org.jiserte.mi.mimatrixviewer.matrixview_to_be_deleted.ZoomPanel;
 
 @Deprecated
@@ -123,7 +117,8 @@ public class MIMatrixViewer extends JFrame{
 		
 
 		
-		int[] protLengths = new int[]{matrix.getSize()};
+		@SuppressWarnings("null")
+    int[] protLengths = new int[]{matrix.getSize()};
 		this.getMatrixPane().setMatrix(matrix);
 		this.getMatrixPane().setProteinLengths(protLengths);
 		this.getMatrixPane().getMatrixPane().accomodateSize();
