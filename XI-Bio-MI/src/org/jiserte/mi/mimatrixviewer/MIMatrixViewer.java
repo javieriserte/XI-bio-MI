@@ -17,13 +17,13 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
-import org.jiserte.mi.mimatrixviewer.matrixview.BlackAndWhiteZoomMatrixColoringStrategy;
-import org.jiserte.mi.mimatrixviewer.matrixview.ColoringSelectionPane;
-import org.jiserte.mi.mimatrixviewer.matrixview.MIMatrixPane;
-import org.jiserte.mi.mimatrixviewer.matrixview.MatrixColoringStrategyFactory;
-import org.jiserte.mi.mimatrixviewer.matrixview.MatrixViewMainPane;
-import org.jiserte.mi.mimatrixviewer.matrixview.ZoomMatrixColoringStrategyFactory;
-import org.jiserte.mi.mimatrixviewer.matrixview.ZoomPanel;
+import org.jiserte.mi.mimatrixviewer.matrixview_to_be_deleted.BlackAndWhiteZoomMatrixColoringStrategy;
+import org.jiserte.mi.mimatrixviewer.matrixview_to_be_deleted.ColoringSelectionPane;
+import org.jiserte.mi.mimatrixviewer.matrixview_to_be_deleted.MIMatrixPane;
+import org.jiserte.mi.mimatrixviewer.matrixview_to_be_deleted.MatrixColoringStrategyFactory;
+import org.jiserte.mi.mimatrixviewer.matrixview_to_be_deleted.MatrixViewMainPane;
+import org.jiserte.mi.mimatrixviewer.matrixview_to_be_deleted.ZoomMatrixColoringStrategyFactory;
+import org.jiserte.mi.mimatrixviewer.matrixview_to_be_deleted.ZoomPanel;
 
 @Deprecated
 public class MIMatrixViewer extends JFrame{

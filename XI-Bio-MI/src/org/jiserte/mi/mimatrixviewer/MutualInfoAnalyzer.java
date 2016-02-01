@@ -13,12 +13,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
-import org.jiserte.mi.mimatrixviewer.circosview.CircosViewMainPane;
-import org.jiserte.mi.mimatrixviewer.matrixview_new.MatrixViewMainPane;
-import org.jiserte.mi.mimatrixviewer.msaview.MsaArea;
-import org.jiserte.mi.mimatrixviewer.msaview.MsaSelectionEvent;
-import org.jiserte.mi.mimatrixviewer.msaview.MsaSelectionListener;
-import org.jiserte.mi.mimatrixviewer.msaview.MsaViewMainPane;
+import org.jiserte.mi.mimatrixviewer.view.circosview.CircosViewMainPane;
+import org.jiserte.mi.mimatrixviewer.view.matrixview.MatrixViewMainPane;
+import org.jiserte.mi.mimatrixviewer.view.msaview.MsaArea;
+import org.jiserte.mi.mimatrixviewer.view.msaview.MsaSelectionEvent;
+import org.jiserte.mi.mimatrixviewer.view.msaview.MsaSelectionListener;
+import org.jiserte.mi.mimatrixviewer.view.msaview.MsaViewMainPane;
 
 import pair.Pair;
 

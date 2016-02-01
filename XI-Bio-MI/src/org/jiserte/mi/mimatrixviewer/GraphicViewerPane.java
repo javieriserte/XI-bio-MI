@@ -10,10 +10,10 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.jiserte.mi.mimatrixviewer.circosview.CircosViewMainPane;
 import org.jiserte.mi.mimatrixviewer.datastructures.CovariationData;
-import org.jiserte.mi.mimatrixviewer.matrixview_new.MatrixViewMainPane;
-import org.jiserte.mi.mimatrixviewer.msaview.MsaViewMainPane;
+import org.jiserte.mi.mimatrixviewer.view.circosview.CircosViewMainPane;
+import org.jiserte.mi.mimatrixviewer.view.matrixview.MatrixViewMainPane;
+import org.jiserte.mi.mimatrixviewer.view.msaview.MsaViewMainPane;
 
 import pair.Pair;
 
