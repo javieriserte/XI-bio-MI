@@ -24,6 +24,7 @@ public class PositiveDataMainViewingPane extends MIViewingPane {
   // ///////////////////////////////////////////////////////////////////////////
   // Components
   private RocPanel rocImagePanel;
+  private PpvPanel ppvImagePanel;
   // ///////////////////////////////////////////////////////////////////////////
 
   // ///////////////////////////////////////////////////////////////////////////
@@ -41,13 +42,18 @@ public class PositiveDataMainViewingPane extends MIViewingPane {
   @Override
   public void setData(CovariationData data) {
     this.rocImagePanel.setData(data);
-
+    this.rocImagePanel.updateUI();
+    
+    this.ppvImagePanel.setData(data);
+    this.ppvImagePanel.updateUI();
 
   }
 
   @Override
   public void forceDrawing() {
     this.rocImagePanel.updateUI();
+    this.ppvImagePanel.updateUI();
+
 
   }
 
@@ -73,8 +79,9 @@ public class PositiveDataMainViewingPane extends MIViewingPane {
     c.gridy = 0;
     this.rocImagePanel = new RocPanel();
     this.add(this.rocImagePanel, c);
-    JPanel ppvVsScorePanel = new JPanel();
-    this.add(ppvVsScorePanel, c);
+    c.gridy=1;
+    this.ppvImagePanel = new PpvPanel();
+    this.add(this.ppvImagePanel, c);
     
   }
   // ///////////////////////////////////////////////////////////////////////////

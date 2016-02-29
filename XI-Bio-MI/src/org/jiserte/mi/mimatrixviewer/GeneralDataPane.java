@@ -256,7 +256,10 @@ public class GeneralDataPane extends JPanel implements Observer{
                 while ( (currentLine = br.readLine()) != null) {
                   String[] fields = currentLine.split("\\s+");
                   if (fields.length==2) {
-                    Pair<Integer, Integer> p = new Pair<>(Integer.valueOf(fields[0]),Integer.valueOf(fields[1]));
+                    Pair<Integer, Integer> p;
+                    Integer v1 = Integer.valueOf(fields[0]);
+                    Integer v2 = Integer.valueOf(fields[1]);
+                    p = (v1<v2) ? new Pair<>(v1,v2): new Pair<>(v2,v1) ;
                     pairs.add(p);
                   }
                 }
