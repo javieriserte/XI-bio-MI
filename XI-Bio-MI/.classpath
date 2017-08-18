@@ -6,5 +6,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/generalUtils"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/XIBioSeq"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/XIBioFormats"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
